@@ -9,10 +9,19 @@ A set of adapters for working with common search engines like [Algolia](https://
 
 Initialze an adapter, for example Algolia:
 
-```javascript
+```typescript
 import { Algolia } from 'unsearch/adapters/algolia'
 
-const adapter = new Algolia({
+// defines schema of document
+interface Document {
+  id: string // id field is required
+
+  // remaining fields can be anything
+  path: string
+  content: string
+}
+
+const adapter = new Algolia<Document>({
   index: 'my-index-name',
   credentials: {
     appId: '...',
@@ -23,8 +32,8 @@ const adapter = new Algolia({
 
 Submit documents for indexing:
 
-```javascript
-const documents = [
+```typescript
+const documents: Document[] = [
   { id: 'welcome', path: '/welcome', content: ... },
   { id: 'getting-started', path: '/start', content: ... },
 ]
@@ -34,13 +43,13 @@ await adapter.submit(documents)
 
 Search the index for matching docs:
 
-```javascript
+```typescript
 const matches = await adapter.search('hello')
 ```
 
 Can also filter the index while searching:
 
-```javascript
+```typescript
 const matches = await adapter.search('hello', {
   filters: [
     or(
