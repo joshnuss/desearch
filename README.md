@@ -7,12 +7,12 @@ A set of adapters for working with common search engines like [Algolia](https://
 
 ## Usage
 
-Initialze an adapter, for example Algolia:
+Initialize an adapter, for example Algolia:
 
 ```typescript
 import { Algolia } from 'unsearch/adapters/algolia'
 
-// defines schema of document
+// define schema of document
 interface Document {
   id: string // id field is required
 
@@ -53,7 +53,7 @@ Can also filter the index while searching:
 const matches = await adapter.search('hello', {
   filters: [
     or(
-      eq('tags', 'js')
+      eq('tags', 'js'),
       eq('tags', 'rust')
     )
   ]
