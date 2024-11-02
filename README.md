@@ -21,7 +21,7 @@ const adapter = new Algolia({
 })
 ```
 
-Submit documents for indexes:
+Submit documents for indexing:
 
 ```javascript
 const documents = [
@@ -32,10 +32,16 @@ const documents = [
 await adapter.submit(documents)
 ```
 
-Search for matching docs:
+Search the index for matching docs:
 
 ```javascript
 const matches = await adapter.search('hello')
+```
+
+Filter the index
+
+```javascript
+const matches = await adapter.search('hello', { filters: [eq('tags', 'js')] })
 ```
 
 ## License
