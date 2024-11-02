@@ -3,7 +3,7 @@ unsearch
 
 A set of adapters for working with common search engines like [Algolia](https://algolia.com), [Meilisearch](meilisearch.com), [Typesense](https://typesense.org) and [Fuse.js](https://www.fusejs.io)
 
-**In active development, don't use yet**
+**🚧 In active development, don't use yet 🚧**
 
 ## Usage
 
