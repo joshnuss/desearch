@@ -38,10 +38,17 @@ Search the index for matching docs:
 const matches = await adapter.search('hello')
 ```
 
-Filter the index
+Can also filter the index while searching:
 
 ```javascript
-const matches = await adapter.search('hello', { filters: [eq('tags', 'js')] })
+const matches = await adapter.search('hello', {
+  filters: [
+    or(
+      eq('tags', 'js')
+      eq('tags', 'rust')
+    )
+  ]
+})
 ```
 
 ## License
