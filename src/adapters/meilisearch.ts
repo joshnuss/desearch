@@ -48,8 +48,6 @@ class Adapter<T extends Unsearch.DocumentBase> implements Unsearch.Adapter<T> {
 
     const total_records = results.totalHits
 
-    console.log(results.hits)
-
     return {
       query,
       sort: [],
