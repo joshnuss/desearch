@@ -1,5 +1,5 @@
 import { Unsearch } from '../types.js'
-import { MeiliSearch } from 'meilisearch'
+import { MeiliSearch as Client } from 'meilisearch'
 import type { Index } from 'meilisearch'
 
 export interface MeiliSearchCredentials {
@@ -7,15 +7,15 @@ export interface MeiliSearchCredentials {
   apiKey: string
 }
 
-class Adapter<T extends Unsearch.DocumentBase> implements Unsearch.Adapter<T> {
+export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Adapter<T> {
   #indexName: string
-  #client: MeiliSearch
+  #client: Client
   #pageSize: number
 
   constructor({index, pageSize, credentials}: {index: string, pageSize?: number, credentials: MeiliSearchCredentials}) {
     this.#indexName = index
     this.#pageSize = pageSize || 10
-    this.#client = new MeiliSearch(credentials)
+    this.#client = new Client(credentials)
   }
 
   async get(id: string): Promise<T | null> {
@@ -71,5 +71,3 @@ function deserialize<T extends Unsearch.DocumentBase>(doc: T): T {
     id: doc.id.replace(/-/g, '/')
   }
 }
-
-export { Adapter as MeiliSearch }
