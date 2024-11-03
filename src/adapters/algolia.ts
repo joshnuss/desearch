@@ -19,7 +19,7 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
   }
 
   async get(id: string): Promise<T | null> {
-    const result =  await this.#client.getObject({
+    const result = await this.#client.getObject({
       indexName: this.#index,
       objectID: id
     })
@@ -60,6 +60,13 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
     await this.#client.saveObjects({
       indexName: this.#index,
       objects: docs.map(serialize)
+    })
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.#client.deleteObject({
+      indexName: this.#index,
+      objectID: id
     })
   }
 

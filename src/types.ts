@@ -28,6 +28,7 @@ export namespace Unsearch {
     get(id: string): Promise<T | null>
     search(query: string, options?: Options): Promise<Result<T>>
     submit(docs: T[]): Promise<void>
+    delete(id: string): Promise<void>
     swap(newIndex: string): Promise<void>
     clear(): Promise<void>
   }
