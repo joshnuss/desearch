@@ -1,0 +1,10 @@
+services:
+  meilisearch:
+    image: getmeili/meilisearch:v1.11
+    env_file:
+      - path: ./dev.env
+        required: true
+    ports:
+      - 7700:7700
+    volumes:
+      - ./data/meili:/meili_data
