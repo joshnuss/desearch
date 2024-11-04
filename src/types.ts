@@ -7,6 +7,7 @@ export namespace Unsearch {
   export interface Options {
     page?: number | string
     sort?: string | Array<string | Sort>
+    facets?: string[]
   }
 
   export interface Result<T> {
