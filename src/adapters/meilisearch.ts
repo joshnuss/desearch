@@ -61,7 +61,8 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
       total: {
         pages: Math.ceil(total_records / this.#pageSize),
         records: total_records
-      }
+      },
+      facets: results.facetDistribution || {}
     }
   }
 

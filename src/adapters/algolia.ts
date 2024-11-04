@@ -53,7 +53,8 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
       total: {
         pages: Math.ceil(total_records / this.#pageSize),
         records: total_records
-      }
+      },
+      facets: result.facets || {}
     }
   }
 

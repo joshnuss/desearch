@@ -10,6 +10,8 @@ export namespace Unsearch {
     facets?: string[]
   }
 
+  export type FacetStat = Record<string, number>
+
   export interface Result<T> {
     query: string
     page: number
@@ -19,6 +21,7 @@ export namespace Unsearch {
     }
     sort: Sort[]
     records: T[]
+    facets: Record<string, FacetStat>
   }
 
   export interface DocumentBase extends Record<string, unknown> {
