@@ -27,7 +27,7 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
   }
 
   async submit(docs: T[]): Promise<void> {
-    await this.#index().addDocuments(docs)
+    await this.#index().addDocuments(docs.map(serialize))
   }
 
   async delete(id: string): Promise<void> {
@@ -70,13 +70,24 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
   }
 }
 
-function deserialize<T extends Unsearch.DocumentBase>(doc: T): T {
+function serialize<T extends Unsearch.DocumentBase>(doc: T): T {
   return {
     ...doc,
     id: escapeId(doc.id)
   }
 }
 
+function deserialize<T extends Unsearch.DocumentBase>(doc: T): T {
+  return {
+    ...doc,
+    id: unescapeId(doc.id)
+  }
+}
+
 function escapeId(id: string): string {
+  return id.replace(/\//g, '-')
+}
+
+function unescapeId(id: string): string {
   return id.replace(/-/g, '/')
 }
