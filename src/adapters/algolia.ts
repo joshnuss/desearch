@@ -36,7 +36,8 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
           indexName: this.#index,
           query,
           page: +(options?.page || 0),
-          hitsPerPage: this.#pageSize
+          hitsPerPage: this.#pageSize,
+          facets: options?.facets || []
         }
       ]
     })

@@ -47,7 +47,8 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
   async search(query: string, options?: Unsearch.Options): Promise<Unsearch.Result<T>> {
     const results = await this.#index().search(query, {
       page: +(options?.page || 0),
-      hitsPerPage: this.#pageSize
+      hitsPerPage: this.#pageSize,
+      facets: options?.facets || []
     })
 
     const total_records = results.totalHits
