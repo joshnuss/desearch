@@ -45,8 +45,10 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
   }
 
   async search(query: string, options?: Unsearch.Options): Promise<Unsearch.Result<T>> {
+    const sort = format_sort_keys(options?.sort || [])
     const results = await this.#index().search(query, {
       page: +(options?.page || 0),
+      sort: sort_to_string(sort),
       hitsPerPage: this.#pageSize,
       facets: options?.facets || []
     })
@@ -55,7 +57,7 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
 
     return {
       query,
-      sort: [],
+      sort,
       records: (results.hits as T[]).map(deserialize),
       page: (results.page || 1) - 1,
       total: {
@@ -91,4 +93,24 @@ function escape_id(id: string): string {
 
 function unescape_id(id: string): string {
   return id.replace(/--/g, '/')
+}
+
+function format_sort_keys(sort: Unsearch.Sort): Required<Unsearch.SortField>[] {
+  if (typeof(sort) == 'string') {
+    return [{ field: sort, direction: 'asc' }]
+  }
+
+  return sort.map(option => {
+    if (typeof(option) == 'string')
+      return { field: option, direction: 'asc' }
+
+    return { field: option.field, direction: option.direction || 'asc'}
+  }) as Required<Unsearch.SortField>[]
+}
+
+function sort_to_string(sort: Required<Unsearch.SortField>[]): string[] {
+  console.log({sort})
+  return sort.map(option => {
+    return `${option.field}:${option.direction || 'asc'}`
+  })
 }
