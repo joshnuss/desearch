@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "vitest",
+    "coverage": "vitest run --coverage",
     "build": "tsc",
     "prepublish": "build && publint",
     "dev": "tsx index.ts",
@@ -29,6 +30,7 @@
     "@eslint/js": "^9.14.0",
     "@types/eslint__js": "^8.42.3",
     "@types/node": "^22.7.9",
+    "@vitest/coverage-v8": "^2.1.4",
     "eslint": "^9.14.0",
     "publint": "^0.2.12",
     "tsx": "^4.19.1",
