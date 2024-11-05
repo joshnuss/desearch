@@ -14,7 +14,6 @@ export class Memory<T extends Unsearch.DocumentBase> implements Unsearch.Adapter
     this.submit(documents)
   }
 
-
   async get(id: string): Promise<T | null> {
     return this.#documents[id]
   }
@@ -26,7 +25,6 @@ export class Memory<T extends Unsearch.DocumentBase> implements Unsearch.Adapter
     const fuse = new Fuse(array, { keys: this.#keys })
     const results = fuse.search(query).map(result => result.item)
     const start = page * this.#pageSize
-    // sort results
     const sorted = order(results, sort)
     const records = sorted.slice(start, this.#pageSize)
 
