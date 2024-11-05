@@ -7,7 +7,13 @@ export namespace Unsearch {
   export type Sort = string | Array<string | SortField>
 
   export interface Options {
-    page?: number | string
+    page: number
+    sort: SortField[]
+    facets: string[]
+  }
+
+  export interface SoftOptions {
+    page?: string | number
     sort?: Sort
     facets?: string[]
   }
@@ -32,7 +38,7 @@ export namespace Unsearch {
 
   export interface Adapter<T extends DocumentBase> {
     get(id: string): Promise<T | null>
-    search(query: string, options?: Options): Promise<Result<T>>
+    search(query: string, options: Options): Promise<Result<T>>
     submit(docs: T[]): Promise<void>
     delete(id: string): Promise<void>
     swap(newIndex: string): Promise<void>

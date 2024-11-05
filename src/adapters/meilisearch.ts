@@ -44,13 +44,13 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
     await this.#index().deleteAllDocuments()
   }
 
-  async search(query: string, options?: Unsearch.Options): Promise<Unsearch.Result<T>> {
-    const sort = normalize_sort_keys(options?.sort || [])
+  async search(query: string, options: Unsearch.Options): Promise<Unsearch.Result<T>> {
+    const { sort, page, facets } = options
     const results = await this.#index().search(query, {
-      page: +(options?.page || 0),
+      page,
       sort: sort_to_strings(sort),
       hitsPerPage: this.#pageSize,
-      facets: options?.facets || []
+      facets
     })
 
     const total_records = results.totalHits
@@ -95,20 +95,7 @@ function unescape_id(id: string): string {
   return id.replace(/--/g, '/')
 }
 
-function normalize_sort_keys(sort: Unsearch.Sort): Required<Unsearch.SortField>[] {
-  if (typeof(sort) == 'string') {
-    return [{ field: sort, direction: 'asc' }]
-  }
-
-  return sort.map(option => {
-    if (typeof(option) == 'string')
-      return { field: option, direction: 'asc' }
-
-    return { field: option.field, direction: option.direction || 'asc'}
-  }) as Required<Unsearch.SortField>[]
-}
-
-function sort_to_strings(sort: Required<Unsearch.SortField>[]): string[] {
+function sort_to_strings(sort: Unsearch.SortField[]): string[] {
   return sort.map(option => {
     return `${option.field}:${option.direction || 'asc'}`
   })

@@ -29,15 +29,16 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
     return deserialize<T>(result as T & {objectID: string})
   }
 
-  async search(query: string, options?: Unsearch.Options): Promise<Unsearch.Result<T>> {
+  async search(query: string, options: Unsearch.Options): Promise<Unsearch.Result<T>> {
+    const { page, facets } = options
     const { results } = await this.#client.search<T>({
       requests: [
         {
           indexName: this.#index,
           query,
-          page: +(options?.page || 0),
+          page,
           hitsPerPage: this.#pageSize,
-          facets: options?.facets || []
+          facets
         }
       ]
     })

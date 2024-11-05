@@ -7,10 +7,10 @@ A set of adapters for working with common search engines like [Algolia](https://
 
 ## Usage
 
-Initialize an adapter, for example Algolia:
+Initialize an index with an adapter, for example Algolia:
 
 ```typescript
-import { Algolia } from 'unsearch/adapters/algolia'
+import { Index, Algolia } from 'unsearch'
 
 // define schema of document
 interface Document {
@@ -21,12 +21,14 @@ interface Document {
   content: string
 }
 
-const adapter = new Algolia<Document>({
-  index: 'my-index-name',
-  credentials: {
-    appId: '...',
-    apiKey: '...'
-  }
+const index = new Index<Document>({
+  adapter: new Algolia({
+    index: 'my-index-name',
+    credentials: {
+      appId: '...',
+      apiKey: '...'
+    }
+  })
 })
 ```
 
@@ -38,19 +40,19 @@ const documents: Document[] = [
   { id: 'getting-started', path: '/start', content: ... },
 ]
 
-await adapter.submit(documents)
+await index.submit(documents)
 ```
 
 Search the index for matching docs:
 
 ```typescript
-const matches = await adapter.search('hello')
+const matches = await index.search('hello')
 ```
 
 Can also filter the index while searching:
 
 ```typescript
-const matches = await adapter.search('hello', {
+const matches = await index.search('hello', {
   filters: [
     or(
       eq('tags', 'js'),
