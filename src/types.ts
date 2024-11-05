@@ -1,12 +1,14 @@
 export namespace Unsearch {
-  export interface Sort {
+  export interface SortField {
     field: string
     direction?: 'asc' | 'desc'
   }
 
+  export type Sort = string | Array<string | SortField>
+
   export interface Options {
     page?: number | string
-    sort?: string | Array<string | Sort>
+    sort?: Sort
     facets?: string[]
   }
 
@@ -19,7 +21,7 @@ export namespace Unsearch {
       pages: number
       records: number
     }
-    sort: Sort[]
+    sort: SortField[]
     records: T[]
     facets: Record<string, FacetStat>
   }
