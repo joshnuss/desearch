@@ -1,5 +1,7 @@
 export { Algolia } from './src/adapters/algolia.js'
 export { MeiliSearch } from './src/adapters/meilisearch.js'
+export { Memory } from './src/adapters/memory.js'
+
 import type { Unsearch } from './src/types.ts'
 
 export class Index<T extends Unsearch.DocumentBase> {
