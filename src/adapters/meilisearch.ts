@@ -19,7 +19,7 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
   }
 
   async get(id: string): Promise<T | null> {
-    const result = await this.#index().getDocument(escapeId(id)) as T
+    const result = await this.#index().getDocument(escape_id(id)) as T
 
     if (!result) return null
 
@@ -31,7 +31,7 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
   }
 
   async delete(id: string): Promise<void> {
-    await this.#index().deleteDocument(escapeId(id))
+    await this.#index().deleteDocument(escape_id(id))
   }
 
   async swap(newIndex: string): Promise<void> {
@@ -74,21 +74,21 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
 function serialize<T extends Unsearch.DocumentBase>(doc: T): T {
   return {
     ...doc,
-    id: escapeId(doc.id)
+    id: escape_id(doc.id)
   }
 }
 
 function deserialize<T extends Unsearch.DocumentBase>(doc: T): T {
   return {
     ...doc,
-    id: unescapeId(doc.id)
+    id: unescape_id(doc.id)
   }
 }
 
-function escapeId(id: string): string {
-  return id.replace(/\//g, '-')
+function escape_id(id: string): string {
+  return id.replace(/\//g, '--')
 }
 
-function unescapeId(id: string): string {
-  return id.replace(/-/g, '/')
+function unescape_id(id: string): string {
+  return id.replace(/--/g, '/')
 }
