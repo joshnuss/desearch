@@ -4,6 +4,8 @@ export { Memory } from './src/adapters/memory.js'
 
 import type { Unsearch } from './src/types.ts'
 
+export type { Unsearch }
+
 export class Index<T extends Unsearch.DocumentBase> {
   #adapter: Unsearch.Adapter<T>
 
@@ -20,11 +22,12 @@ export class Index<T extends Unsearch.DocumentBase> {
 
     if (Array.isArray(docs_or_doc)) {
       docs = docs_or_doc
+      if (!docs.length) return
     } else {
       docs = [docs_or_doc]
     }
 
-    return await this.#adapter.submit(docs)
+    await this.#adapter.submit(docs)
   }
 
   async search(query: string, options?: Unsearch.SoftOptions): Promise<Unsearch.Result<T>> {
