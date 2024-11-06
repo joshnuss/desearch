@@ -1,11 +1,11 @@
 import { Index } from '../index.js'
 import type { Unsearch } from '../index.js'
 
-interface Document {
+interface Document extends Unsearch.DocumentBase {
   id: string
 }
 
-const adapter: Unsearch.Adapter<Document> = {
+const adapter = {
   get: vi.fn(),
   submit: vi.fn(),
   search: vi.fn(),
@@ -141,7 +141,7 @@ describe('index', () => {
   })
 
   test('delete', async () => {
-    adapter.delete.mockResolvedValue()
+    adapter.delete.mockResolvedValue(null)
 
     await index.delete('example')
 
@@ -150,7 +150,7 @@ describe('index', () => {
 
 
   test('swap', async () => {
-    adapter.swap.mockResolvedValue()
+    adapter.swap.mockResolvedValue(null)
 
     await index.swap('new-index')
 
@@ -158,7 +158,7 @@ describe('index', () => {
   })
 
   test('clear', async () => {
-    adapter.clear.mockResolvedValue()
+    adapter.clear.mockResolvedValue({})
 
     await index.clear()
 
