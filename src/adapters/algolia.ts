@@ -1,6 +1,6 @@
 import { Unsearch } from '../types.js'
 import { algoliasearch } from 'algoliasearch'
-import type { Algoliasearch, SearchResponse, SearchResponses } from 'algoliasearch'
+import type { Algoliasearch, SearchResponse } from 'algoliasearch'
 
 export interface AlgoliaCredentials {
   appId: string
@@ -73,8 +73,15 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
     })
   }
 
-  async swap(newIndex: string): Promise<void> {
-    await this.#client.moveIndex(this.#index, newIndex)
+  async swap(new_index: string): Promise<void> {
+    await this.#client.operationIndex({
+      indexName: this.#index,
+      operationIndexParams: {
+        operation: 'move',
+        destination: new_index,
+        scope: ['rules', 'settings']
+      }
+    })
   }
 
   async clear(): Promise<void> {
