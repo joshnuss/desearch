@@ -26,5 +26,5 @@ jobs:
       - run: pnpm test
         if: ${{ !cancelled() }}
 
-      - run: pnpm check
+      - run: pnpm lint
         if: ${{ !cancelled() }}
