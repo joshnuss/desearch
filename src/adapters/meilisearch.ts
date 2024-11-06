@@ -97,6 +97,6 @@ function unescape_id(id: string): string {
 
 function sort_to_strings(sort: Unsearch.SortField[]): string[] {
   return sort.map(option => {
-    return `${option.field}:${option.direction || 'asc'}`
+    return `${option.field}:${option.direction}`
   })
 }
