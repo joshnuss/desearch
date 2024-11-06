@@ -64,7 +64,8 @@ describe('index', () => {
       expect(adapter.search).toBeCalledWith('query', {
         page: 0,
         sort: [],
-        facets: []
+        facets: [],
+        filters: []
       })
     })
 
@@ -92,6 +93,30 @@ describe('index', () => {
       expect(adapter.search).toBeCalledWith('query',
         expect.objectContaining({ facets: [ 'tags', 'author' ] })
       )
+    })
+
+    describe('passes filters', () => {
+      test('single filter', async () => {
+        await index.search('query', {
+          filters: {
+            op: '=',
+            field: 'author',
+            value: 'josh'
+          }
+        })
+
+        expect(adapter.search).toBeCalledWith('query',
+          expect.objectContaining({
+            filters: [
+              {
+                op: '=',
+                field: 'author',
+                value: 'josh'
+              }
+            ]
+          })
+        )
+      })
     })
 
     describe('sort', () => {

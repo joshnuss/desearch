@@ -19,8 +19,8 @@ export class Memory<T extends Unsearch.DocumentBase> implements Unsearch.Adapter
   }
 
   async search(query: string, options: Unsearch.Options): Promise<Unsearch.Result<T>> {
-    const { page, sort } = options
-    // filter documents here
+    const { page, sort, filters } = options
+    // TODO: filter documents here
     const array = Object.values(this.#documents)
     const fuse = new Fuse(array, { keys: this.#keys })
     const results = fuse.search(query).map(result => result.item)
@@ -34,6 +34,7 @@ export class Memory<T extends Unsearch.DocumentBase> implements Unsearch.Adapter
       sort,
       records,
       facets: {},
+      filters,
       total: {
         records: results.length,
         pages: Math.ceil(results.length / this.#pageSize)

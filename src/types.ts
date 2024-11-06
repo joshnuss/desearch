@@ -1,3 +1,5 @@
+import type * as filters from './filters.ts'
+
 export interface SortField {
   field: string
   direction?: 'asc' | 'desc'
@@ -9,12 +11,14 @@ export interface Options {
   page: number
   sort: SortField[]
   facets: string[]
+  filters: filters.Filter[]
 }
 
 export interface SoftOptions {
   page?: string | number
   sort?: Sort
   facets?: string[]
+  filters?: filters.Filter | filters.Filter[]
 }
 
 export type FacetStat = Record<string, number>
@@ -29,6 +33,7 @@ export interface Result<T> {
   sort: SortField[]
   records: T[]
   facets: Record<string, FacetStat>
+  filters: filters.Filter[]
 }
 
 export interface DocumentBase extends Record<string, unknown> {

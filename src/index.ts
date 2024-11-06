@@ -3,6 +3,7 @@ export { MeiliSearch } from './adapters/meilisearch.js'
 export { Memory } from './adapters/memory.js'
 
 import type * as Unsearch from './types.ts'
+import type * as filters from './filters.ts'
 
 export type { Unsearch }
 
@@ -34,11 +35,13 @@ export class Index<T extends Unsearch.DocumentBase> {
     const sort = normalize_sort_keys(options?.sort || [])
     const page: number = +(options?.page || 0)
     const facets: string[] = options?.facets || []
+    const filters: filters.Filter[] = normalize_filters(options?.filters || [])
 
     return await this.#adapter.search(query, {
       page,
       sort,
-      facets
+      facets,
+      filters
     })
   }
 
@@ -53,6 +56,14 @@ export class Index<T extends Unsearch.DocumentBase> {
   async clear(): Promise<void> {
     await this.#adapter.clear()
   }
+}
+
+function normalize_filters(filters: filters.Filter | filters.Filter[]): filters.Filter[] {
+  if (Array.isArray(filters)) {
+    return filters
+  }
+
+  return [filters]
 }
 
 function normalize_sort_keys(sort: Unsearch.Sort): Required<Unsearch.SortField>[] {

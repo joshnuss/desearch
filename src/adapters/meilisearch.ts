@@ -45,7 +45,7 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
   }
 
   async search(query: string, options: Unsearch.Options): Promise<Unsearch.Result<T>> {
-    const { sort, page, facets } = options
+    const { sort, page, facets, filters } = options
     const results = await this.#index().search(query, {
       page,
       sort: sort_to_strings(sort),
@@ -64,7 +64,8 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
         pages: Math.ceil(total_records / this.#pageSize),
         records: total_records
       },
-      facets: results.facetDistribution || {}
+      facets: results.facetDistribution || {},
+      filters
     }
   }
 

@@ -30,7 +30,7 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
   }
 
   async search(query: string, options: Unsearch.Options): Promise<Unsearch.Result<T>> {
-    const { page, facets } = options
+    const { page, facets, filters } = options
     const { results } = await this.#client.search<T>({
       requests: [
         {
@@ -55,7 +55,8 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
         pages: Math.ceil(total_records / this.#pageSize),
         records: total_records
       },
-      facets: result.facets || {}
+      facets: result.facets || {},
+      filters
     }
   }
 
