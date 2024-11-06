@@ -1,5 +1,5 @@
-import { Index } from '../index.js'
-import type { Unsearch } from '../index.js'
+import { Index } from '../src/index.js'
+import type { Unsearch } from '../src/index.js'
 
 interface Document extends Unsearch.DocumentBase {
   id: string

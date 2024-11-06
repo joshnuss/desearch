@@ -1,8 +1,8 @@
-export { Algolia } from './src/adapters/algolia.js'
-export { MeiliSearch } from './src/adapters/meilisearch.js'
-export { Memory } from './src/adapters/memory.js'
+export { Algolia } from './adapters/algolia.js'
+export { MeiliSearch } from './adapters/meilisearch.js'
+export { Memory } from './adapters/memory.js'
 
-import type { Unsearch } from './src/types.ts'
+import type { Unsearch } from './types.ts'
 
 export type { Unsearch }
 
