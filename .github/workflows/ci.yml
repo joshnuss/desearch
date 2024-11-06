@@ -20,11 +20,16 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
 
-      - run: pnpm install
-      - run: pnpm build
+      - name: Install
+        run: pnpm install
 
-      - run: pnpm test
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
         if: ${{ !cancelled() }}
 
-      - run: pnpm lint
+      - name: Lint
+        run: pnpm lint
         if: ${{ !cancelled() }}
