@@ -1,4 +1,4 @@
-import { Unsearch } from '../types.js'
+import type * as Unsearch from '../types.js'
 import { MeiliSearch as Client } from 'meilisearch'
 import type { Index } from 'meilisearch'
 

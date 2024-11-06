@@ -1,4 +1,4 @@
-import { Unsearch } from '../types.js'
+import type * as Unsearch from '../types.js'
 import { algoliasearch } from 'algoliasearch'
 import type { Algoliasearch, SearchResponse } from 'algoliasearch'
 

@@ -1,4 +1,4 @@
-import type { Unsearch } from '../types.ts'
+import type * as Unsearch from '../types.ts'
 import Fuse  from 'fuse.js'
 
 export class Memory<T extends Unsearch.DocumentBase> implements Unsearch.Adapter<T> {
@@ -61,5 +61,6 @@ export class Memory<T extends Unsearch.DocumentBase> implements Unsearch.Adapter
 
 function order<T>(docs: T[], sort: Unsearch.SortField[]): T[] {
   // TODO: implement sort
+  console.log(sort)
   return docs
 }
