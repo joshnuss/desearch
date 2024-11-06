@@ -123,7 +123,7 @@ describe('index', () => {
       test('field names as objects', async () => {
         await index.search('query', {
           sort: [
-            { field: 'tags', direction: 'asc' },
+            { field: 'tags' },
             { field: 'author', direction: 'desc' }
           ]
         })
