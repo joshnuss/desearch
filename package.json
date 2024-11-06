@@ -24,6 +24,7 @@
   "main": "dist/src/index.js",
   "exports": {
     ".": "./dist/src/index.js",
+    "./filters": "./dist/src/filters.js",
     "./adapters/*": "./dist/src/adapters/*"
   },
   "devDependencies": {
