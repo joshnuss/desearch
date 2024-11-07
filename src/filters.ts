@@ -7,7 +7,7 @@ export interface Field {
 export interface Between {
   field: string
   op: 'between'
-  values: Array<unknown>
+  values: [unknown, unknown]
 }
 
 export interface Condition {
@@ -25,38 +25,42 @@ export type Filter = Field
   | Condition
   | Not
 
-export function eq(field: string, value: unknown): Filter {
+export function eq(field: string, value: unknown): Field {
   return { field, op: '=', value}
 }
 
-export function neq(field: string, value: unknown): Filter {
+export function neq(field: string, value: unknown): Field {
   return { field, op: '!=', value}
 }
 
-export function gt(field: string, value: unknown): Filter {
+export function gt(field: string, value: unknown): Field {
   return { field, op: '>', value}
 }
 
-export function gte(field: string, value: unknown): Filter {
+export function gte(field: string, value: unknown): Field {
   return { field, op: '>=', value}
 }
 
-export function lt(field: string, value: unknown): Filter {
+export function lt(field: string, value: unknown): Field {
   return { field, op: '<', value}
 }
 
-export function lte(field: string, value: unknown): Filter {
+export function lte(field: string, value: unknown): Field {
   return { field, op: '<=', value}
 }
 
-export function not(condition: Filter): Filter {
+export function between(field: string, a: unknown, b: unknown): Between {
+  return { field, op: 'between', values: [a, b] }
+}
+
+export function not(condition: Filter): Not {
   return { op: 'not', condition }
 }
 
-export function and(...conditions: Filter[]): Filter {
+export function and(...conditions: Filter[]): Condition {
   return { op: 'and', conditions }
 }
 
-export function or(...conditions: Filter[]): Filter {
+export function or(...conditions: Filter[]): Condition {
   return { op: 'or', conditions }
 }
