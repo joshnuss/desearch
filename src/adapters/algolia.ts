@@ -26,7 +26,7 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
 
     if (!result) return null
 
-    return deserialize<T>(result as T & {objectID: string})
+    return deserialize(result) as T
   }
 
   async search(query: string, options: Unsearch.Options): Promise<Unsearch.Result<T>> {
@@ -63,7 +63,7 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
   async submit(docs: T[]): Promise<void> {
     await this.#client.saveObjects({
       indexName: this.#index,
-      objects: docs.map(serialize)
+      objects: docs.map(doc => serialize(doc) as unknown as Record<string, unknown>)
     })
   }
 
@@ -92,14 +92,14 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
   }
 }
 
-function serialize<T extends Unsearch.DocumentBase>(doc: T): { objectID: string } & T {
+function serialize<T extends Unsearch.DocumentBase>(doc: T): T & { objectID: string } {
   return {
     objectID: doc.id,
     ...doc
   }
 }
 
-function deserialize<T extends Unsearch.DocumentBase>(doc: T & { objectID: string }): T {
+function deserialize<T>(doc: Record<string, unknown>): T {
   return {
     ...doc,
     id: doc.objectID
