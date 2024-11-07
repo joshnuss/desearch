@@ -21,7 +21,7 @@ export interface SoftOptions {
   filters?: filters.Filter | filters.Filter[]
 }
 
-export type FacetStat = Record<string, number>
+export type FacetStats = Record<string, number>
 
 export interface Result<T> {
   query: string
@@ -32,11 +32,11 @@ export interface Result<T> {
   }
   sort: SortField[]
   records: T[]
-  facets: Record<string, FacetStat>
+  facets: Record<string, FacetStats>
   filters: filters.Filter[]
 }
 
-export interface DocumentBase extends Record<string, unknown> {
+export interface DocumentBase {
   id: string
 }
 
