@@ -84,7 +84,6 @@ describe('filters', () => {
     })
   })
 
-
   test('and returns condition filter', () => {
     const filter = and(
       eq('author', 'josh'),
