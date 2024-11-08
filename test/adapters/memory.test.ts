@@ -38,7 +38,7 @@ describe('memory adapter', () => {
 
   describe('search', () => {
     const adapter = new Memory<Document>({
-      keys: ['id', 'title', 'catgegory'],
+      keys: ['id', 'title', 'category'],
       documents: [
         { id: 'shirt', category: 'shirts', title: 'T-Shirt', price: 20, tags: ['fall', 'warm', 'summer'] },
         { id: 'pants', category: 'clothing', title: 'Pants', price: 40, tags: ['fall', 'summer'] },
@@ -301,7 +301,7 @@ describe('memory adapter', () => {
     })
 
     describe('pagination', () => {
-      let adapter = new Memory({ pageSize: 5 })
+      const adapter = new Memory({ pageSize: 5 })
 
       beforeAll(async () => {
         const docs = []
@@ -320,11 +320,11 @@ describe('memory adapter', () => {
 
         expect(result.page).toEqual(0)
         expect(result.records).toEqual([
-          {id: 1},
-          {id: 2},
-          {id: 3},
-          {id: 4},
-          {id: 5}
+          {id: "1"},
+          {id: "2"},
+          {id: "3"},
+          {id: "4"},
+          {id: "5"}
         ])
         expect(result.total).toEqual({
           pages: 8,
@@ -337,11 +337,11 @@ describe('memory adapter', () => {
 
         expect(result.page).toEqual(0)
         expect(result.records).toEqual([
-          {id: 1},
-          {id: 2},
-          {id: 3},
-          {id: 4},
-          {id: 5}
+          {id: "1"},
+          {id: "2"},
+          {id: "3"},
+          {id: "4"},
+          {id: "5"}
         ])
         expect(result.total).toEqual({
           pages: 8,
@@ -354,11 +354,11 @@ describe('memory adapter', () => {
 
         expect(result.page).toEqual(1)
         expect(result.records).toEqual([
-          {id: 6},
-          {id: 7},
-          {id: 8},
-          {id: 9},
-          {id: 10}
+          {id: "6"},
+          {id: "7"},
+          {id: "8"},
+          {id: "9"},
+          {id: "10"}
         ])
         expect(result.total).toEqual({
           pages: 8,
@@ -371,9 +371,9 @@ describe('memory adapter', () => {
 
         expect(result.page).toEqual(7)
         expect(result.records).toEqual([
-          {id: 36},
-          {id: 37},
-          {id: 38}
+          {id: "36"},
+          {id: "37"},
+          {id: "38"}
         ])
         expect(result.total).toEqual({
           pages: 8,
