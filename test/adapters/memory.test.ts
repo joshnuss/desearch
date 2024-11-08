@@ -301,14 +301,14 @@ describe('memory adapter', () => {
     })
 
     describe('pagination', () => {
-      let adapter = new Memory<Document>({ pageSize: 5 })
+      let adapter = new Memory({ pageSize: 5 })
 
       beforeAll(async () => {
         const docs = []
 
         for (let i=1; i<=38; i++) {
           docs.push({
-            id: i
+            id: String(i)
           })
         }
 
