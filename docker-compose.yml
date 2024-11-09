@@ -1,10 +1,22 @@
 services:
   meilisearch:
     image: getmeili/meilisearch:v1.11
-    env_file:
-      - path: ./dev.env
-        required: true
+    environment:
+      - MEILI_MASTER_KEY
     ports:
       - 7700:7700
     volumes:
       - ./data/meili:/meili_data
+
+  elasticsearch:
+    image: elasticsearch:8.15.3
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ELASTIC_PASSWORD
+      - KIBANA_PASSWORD
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - ./data/elastic/certs:/usr/share/elasticsearch/config/certs
