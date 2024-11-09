@@ -71,7 +71,7 @@ describe('algolia', () => {
     })
   })
 
-  // TODO: search (+query, +facets, filters, sort, +pagination)
+  // TODO: search (+query, +facets, filters, +sort, +pagination)
   describe('search', () => {
     test('query', async () => {
       client.search.mockResolvedValue({
@@ -138,6 +138,49 @@ describe('algolia', () => {
           may: 4,
           june: 2
         }
+      })
+    })
+
+    test('sorting', async () => {
+      client.search.mockResolvedValue({
+        results: [
+          {
+            hits: [
+              { objectID: 'guides/react', title: 'React' },
+              { objectID: 'guides/svelte', title: 'Svelte' }
+            ],
+            page: 2,
+            nbHits: 49,
+            nbPages: 5,
+            facets: {}
+          }
+        ]
+      })
+
+      const result = await adapter.search('some query',
+        search_options({
+          sort: [
+            { field: 'title', direction: 'asc' },
+            { field: 'id', direction: 'desc' }
+          ]
+        }))
+
+      expect(result.sort).toEqual([
+        { field: 'title', direction: 'asc' },
+        { field: 'id', direction: 'desc' }
+      ])
+
+      expect(client.search).toBeCalledWith({
+        requests: [
+          expect.objectContaining({
+            indexName: 'fake-index',
+            query: 'some query',
+            customRanking: [
+              'asc(title)',
+              'desc(id)'
+            ]
+          })
+        ]
       })
     })
 

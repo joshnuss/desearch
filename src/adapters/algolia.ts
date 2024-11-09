@@ -30,7 +30,7 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
   }
 
   async search(query: string, options: Unsearch.Options): Promise<Unsearch.Result<T>> {
-    const { page, facets, filters } = options
+    const { page, facets, filters, sort } = options
     const { results } = await this.#client.search<T>({
       requests: [
         {
@@ -38,7 +38,8 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
           query,
           page,
           hitsPerPage: this.#pageSize,
-          facets
+          facets,
+          customRanking: ranking_keys(sort)
         }
       ]
     })
@@ -48,7 +49,7 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
 
     return {
       query,
-      sort: [],
+      sort,
       records: result.hits.map(record => deserialize<T>(record)) as T[],
       page: result.page || 0,
       total: {
@@ -104,4 +105,10 @@ function deserialize<T extends Unsearch.DocumentBase>(doc: Record<string, unknow
     ...doc,
     id: doc.objectID
   } as T
+}
+
+function ranking_keys(sort: Unsearch.SortField[]): string[] {
+  return sort.map(order => {
+    return `${order.direction}(${order.field})`
+  })
 }
