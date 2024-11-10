@@ -49,8 +49,8 @@ export function lte(field: string, value: unknown): Field {
   return { field, op: '<=', value}
 }
 
-export function between(field: string, a: unknown, b: unknown): Between {
-  return { field, op: 'between', values: [a, b] }
+export function between(field: string, min: unknown, max: unknown): Between {
+  return { field, op: 'between', values: [min, max] }
 }
 
 export function not(condition: Filter): Not {
