@@ -1,6 +1,7 @@
 import type * as Unsearch from '../types.js'
 import { Client } from 'typesense'
 import type { ConfigurationOptions } from 'typesense/lib/Typesense/Configuration.d.ts'
+import type { DocumentSchema, SearchResponseFacetCountSchema } from 'typesense/lib/Typesense/Documents.d.ts'
 
 export class TypeSense<T extends Unsearch.DocumentBase> implements Unsearch.Adapter<T> {
   #collectionName: string
@@ -41,32 +42,47 @@ export class TypeSense<T extends Unsearch.DocumentBase> implements Unsearch.Adap
 
   async search(query: string, options: Unsearch.Options): Promise<Unsearch.Result<T>> {
     const { sort, page, facets, filters } = options
-    const results = await this.#collection().search(query, {
-      page,
-      sort: sort_to_strings(sort),
-      hitsPerPage: this.#pageSize,
-      facets
+    const results = await this.#client.collections(this.#collectionName).documents().search({
+      q: query,
+      per_page: this.#pageSize,
+      page: page + 1,
+      sort_by: sort_to_string(sort),
+      facet_by: facets
     })
 
-    const total_records = results.totalHits
+    const total_records = results.found
 
     return {
       query,
       sort,
-      records: (results.hits as T[]).map(deserialize),
+      records: (results.hits || []).map(hit => hit.document) as T[],
       page: (results.page || 1) - 1,
       total: {
         pages: Math.ceil(total_records / this.#pageSize),
         records: total_records
       },
-      facets: results.facetDistribution || {},
+      facets: extract_facets(results.facet_counts || []),
       filters
     }
   }
 }
 
-function sort_to_strings(sort: Unsearch.SortField[]): string[] {
-  return sort.map(option => {
-    return `${option.field}:${option.direction}`
+function sort_to_string(sort: Unsearch.SortField[]): string {
+  return sort
+    .map(option => `${option.field}:${option.direction}`)
+    .join(',')
+}
+
+function extract_facets<T extends DocumentSchema>(stats: SearchResponseFacetCountSchema<T>[]): Record<string, Unsearch.FacetStats> {
+  const results: Record<string, Unsearch.FacetStats> = {}
+
+  stats.forEach(({ counts, field_name }) => {
+    results[field_name as string] ||= {}
+
+    counts.forEach(({ value, count }) => {
+      results[field_name as string][value] = count
+    })
   })
+
+  return results
 }
