@@ -92,20 +92,26 @@ function match<T>(doc: T, filter: filters.Filter): boolean {
   // TODO: handle arrays `if (Array.isArray(doc[field.field])) { }`
   switch (filter.op) {
     case '=':
+      // @ts-ignore
       return doc[filter.field as keyof(T)] == filter.value
     case '!=':
+      // @ts-ignore
       return doc[filter.field as keyof(T)] !== filter.value
     case '>':
+      // @ts-ignore
       return doc[filter.field as keyof(T)] > filter.value
     case '>=':
+      // @ts-ignore
       return doc[filter.field as keyof(T)] >= filter.value
     case '<':
+      // @ts-ignore
       return doc[filter.field as keyof(T)] < filter.value
     case '<=':
+      // @ts-ignore
       return doc[filter.field as keyof(T)] <= filter.value
     case 'between':
-      return doc[filter.field as keyof(T)] >= filter.values[0]
-              && doc[filter.field as keyof(T)] <= filter.values[1]
+      // @ts-ignore
+      return doc[filter.field as keyof(T)] >= filter.values[0] && doc[filter.field as keyof(T)] <= filter.values[1]
     case 'not':
       return !match(doc, filter.condition)
 
@@ -122,6 +128,7 @@ function aggregate_facets<T>(docs: T[], facets: string[]): Record<string, FacetS
 
   for (const doc of docs) {
     for (const facet of facets) {
+      // @ts-ignore
       const value = doc[facet]
 
       if (typeof(value) == 'undefined') continue

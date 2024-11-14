@@ -50,6 +50,7 @@ export class Algolia<T extends DocumentBase> implements Adapter<T> {
     return {
       query,
       sort,
+      // @ts-expect-error fixme
       records: result.hits.map(record => deserialize<T>(record)) as T[],
       page: result.page || 0,
       total: {
