@@ -7,8 +7,6 @@ on:
     types:
       - completed
 
-concurrency: ci-${{ github.ref }}
-
 jobs:
   release:
     name: Release

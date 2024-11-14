@@ -2,8 +2,6 @@ name: CI
 
 on: [push, pull_request]
 
-concurrency: ci-${{ github.ref }}
-
 jobs:
   build:
     name: Build
