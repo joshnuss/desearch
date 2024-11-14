@@ -1,5 +1,5 @@
 import { TypeSense } from '../../src/index.js'
-import type { Unsearch } from '../../src/index.js'
+import type { SearchOptions } from '../../src/index.js'
 
 vi.mock('typesense', () => {
   return {
@@ -87,34 +87,61 @@ describe('typesense', () => {
       collection.documents.mockReturnValue(documents)
     })
 
-    test('query', async () => {
-      documents.search.mockResolvedValue({
-        hits: [
-          { document: { id: 'guides/react', title: 'React' }},
-          { document: { id: 'guides/svelte', title: 'Svelte' }}
-        ],
-        found: 50,
-        page: 1
+    describe('query', () => {
+      test('when found', async () => {
+        documents.search.mockResolvedValue({
+          hits: [
+            { document: { id: 'guides/react', title: 'React' }},
+            { document: { id: 'guides/svelte', title: 'Svelte' }}
+          ],
+          found: 50,
+          page: 1
+        })
+
+        const result = await adapter.search('some query', search_options())
+
+        expect(documents.search).toBeCalledWith(
+          expect.objectContaining({ q: 'some query' })
+        )
+
+        expect(result.query).toEqual('some query')
+
+        expect(result.records).toEqual([
+          expect.objectContaining({ id: 'guides/react', title: 'React' }),
+          expect.objectContaining({ id: 'guides/svelte', title: 'Svelte' })
+        ])
+
+        expect(result.facets).toEqual({})
+        expect(result.page).toEqual(0)
+        expect(result.total).toEqual({
+          pages: 5,
+          records: 50
+        })
       })
 
-      const result = await adapter.search('some query', search_options())
+      test('when not found', async () => {
+        documents.search.mockResolvedValue({
+          hits: undefined,
+          found: 0,
+          page: undefined
+        })
 
-      expect(documents.search).toBeCalledWith(
-        expect.objectContaining({ q: 'some query' })
-      )
+        const result = await adapter.search('some query', search_options())
 
-      expect(result.query).toEqual('some query')
+        expect(documents.search).toBeCalledWith(
+          expect.objectContaining({ q: 'some query' })
+        )
 
-      expect(result.records).toEqual([
-        expect.objectContaining({ id: 'guides/react', title: 'React' }),
-        expect.objectContaining({ id: 'guides/svelte', title: 'Svelte' })
-      ])
+        expect(result.query).toEqual('some query')
 
-      expect(result.facets).toEqual({})
-      expect(result.page).toEqual(0)
-      expect(result.total).toEqual({
-        pages: 5,
-        records: 50
+        expect(result.records).toEqual([])
+
+        expect(result.facets).toEqual({})
+        expect(result.page).toEqual(0)
+        expect(result.total).toEqual({
+          pages: 0,
+          records: 0
+        })
       })
     })
 
@@ -269,7 +296,7 @@ describe('typesense', () => {
   })
 })
 
-function search_options(options: Partial<Unsearch.Options> = {}): Unsearch.Options {
+function search_options(options: Partial<SearchOptions> = {}): SearchOptions {
   return {
     page: 0,
     facets: [],

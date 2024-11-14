@@ -1,5 +1,5 @@
 import { MeiliSearch } from '../../src/index.js'
-import type { Unsearch } from '../../src/index.js'
+import type { SearchOptions } from '../../src/index.js'
 
 vi.mock('meilisearch', () => {
   return {
@@ -236,7 +236,7 @@ describe('meili', () => {
   })
 })
 
-function search_options(options: Partial<Unsearch.Options> = {}): Unsearch.Options {
+function search_options(options: Partial<SearchOptions> = {}): SearchOptions {
   return {
     page: 0,
     facets: [],

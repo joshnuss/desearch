@@ -1,9 +1,9 @@
-import type * as Unsearch from '../types.js'
+import type { Adapter, DocumentBase, SortField, SearchOptions, SearchResult, FacetStats } from '../types.js'
 import { Client } from 'typesense'
 import type { ConfigurationOptions } from 'typesense/lib/Typesense/Configuration.d.ts'
 import type { DocumentSchema, SearchResponseFacetCountSchema } from 'typesense/lib/Typesense/Documents.d.ts'
 
-export class TypeSense<T extends Unsearch.DocumentBase> implements Unsearch.Adapter<T> {
+export class TypeSense<T extends DocumentBase> implements Adapter<T> {
   #collectionName: string
   #client: Client
   #pageSize: number
@@ -40,7 +40,7 @@ export class TypeSense<T extends Unsearch.DocumentBase> implements Unsearch.Adap
     await this.#client.collections(this.#collectionName).documents().delete()
   }
 
-  async search(query: string, options: Unsearch.Options): Promise<Unsearch.Result<T>> {
+  async search(query: string, options: SearchOptions): Promise<SearchResult<T>> {
     const { sort, page, facets, filters } = options
     const results = await this.#client.collections(this.#collectionName).documents().search({
       q: query,
@@ -67,14 +67,14 @@ export class TypeSense<T extends Unsearch.DocumentBase> implements Unsearch.Adap
   }
 }
 
-function sort_to_string(sort: Unsearch.SortField[]): string {
+function sort_to_string(sort: SortField[]): string {
   return sort
     .map(option => `${option.field}:${option.direction}`)
     .join(',')
 }
 
-function extract_facets<T extends DocumentSchema>(stats: SearchResponseFacetCountSchema<T>[]): Record<string, Unsearch.FacetStats> {
-  const results: Record<string, Unsearch.FacetStats> = {}
+function extract_facets<T extends DocumentSchema>(stats: SearchResponseFacetCountSchema<T>[]): Record<string, FacetStats> {
+  const results: Record<string, FacetStats> = {}
 
   stats.forEach(({ counts, field_name }) => {
     results[field_name as string] ||= {}

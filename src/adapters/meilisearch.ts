@@ -1,4 +1,4 @@
-import type * as Unsearch from '../types.js'
+import type { Adapter, DocumentBase, SearchOptions, SearchResult, SortField } from '../types.js'
 import { MeiliSearch as Client } from 'meilisearch'
 import type { Index } from 'meilisearch'
 
@@ -7,7 +7,7 @@ export interface MeiliSearchCredentials {
   apiKey: string
 }
 
-export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Adapter<T> {
+export class MeiliSearch<T extends DocumentBase> implements Adapter<T> {
   #indexName: string
   #client: Client
   #pageSize: number
@@ -44,7 +44,7 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
     await this.#index().deleteAllDocuments()
   }
 
-  async search(query: string, options: Unsearch.Options): Promise<Unsearch.Result<T>> {
+  async search(query: string, options: SearchOptions): Promise<SearchResult<T>> {
     const { sort, page, facets, filters } = options
     const results = await this.#index().search(query, {
       page,
@@ -74,14 +74,14 @@ export class MeiliSearch<T extends Unsearch.DocumentBase> implements Unsearch.Ad
   }
 }
 
-function serialize<T extends Unsearch.DocumentBase>(doc: T): T {
+function serialize<T extends DocumentBase>(doc: T): T {
   return {
     ...doc,
     id: escape_id(doc.id)
   }
 }
 
-function deserialize<T extends Unsearch.DocumentBase>(doc: T): T {
+function deserialize<T extends DocumentBase>(doc: T): T {
   return {
     ...doc,
     id: unescape_id(doc.id)
@@ -96,7 +96,7 @@ function unescape_id(id: string): string {
   return id.replace(/--/g, '/')
 }
 
-function sort_to_strings(sort: Unsearch.SortField[]): string[] {
+function sort_to_strings(sort: SortField[]): string[] {
   return sort.map(option => {
     return `${option.field}:${option.direction}`
   })

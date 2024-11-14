@@ -1,5 +1,5 @@
 import { Memory } from '../../src/index.js'
-import type { Unsearch } from '../../src/index.js'
+import type { SearchOptions } from '../../src/index.js'
 import { eq, neq, gt, gte, lt, lte, between, not, and, or } from '../../src/filters.js'
 
 interface Document {
@@ -501,7 +501,7 @@ describe('memory adapter', () => {
   })
 })
 
-function search_options({...options} = {}): Unsearch.Options {
+function search_options({...options} = {}): SearchOptions {
   return {
     page: 0,
     sort: [],

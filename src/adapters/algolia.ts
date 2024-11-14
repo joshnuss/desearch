@@ -1,4 +1,4 @@
-import type * as Unsearch from '../types.js'
+import type { Adapter, DocumentBase, SearchOptions, SearchResult, SortField } from '../types.js'
 import { algoliasearch } from 'algoliasearch'
 import type { Algoliasearch, SearchResponse } from 'algoliasearch'
 
@@ -7,7 +7,7 @@ export interface AlgoliaCredentials {
   apiKey: string
 }
 
-export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapter<T> {
+export class Algolia<T extends DocumentBase> implements Adapter<T> {
   #index: string
   #client: Algoliasearch
   #pageSize: number
@@ -29,7 +29,7 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
     return deserialize<T>(result)
   }
 
-  async search(query: string, options: Unsearch.Options): Promise<Unsearch.Result<T>> {
+  async search(query: string, options: SearchOptions): Promise<SearchResult<T>> {
     const { page, facets, filters, sort } = options
     const { results } = await this.#client.search<T>({
       requests: [
@@ -53,7 +53,7 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
       records: result.hits.map(record => deserialize<T>(record)) as T[],
       page: result.page || 0,
       total: {
-        pages: result.nbPages,
+        pages: result.nbPages || 0,
         records: total_records
       },
       facets: result.facets || {},
@@ -93,21 +93,21 @@ export class Algolia<T extends Unsearch.DocumentBase> implements Unsearch.Adapte
   }
 }
 
-function serialize<T extends Unsearch.DocumentBase>(doc: T): T & { objectID: string } {
+function serialize<T extends DocumentBase>(doc: T): T & { objectID: string } {
   return {
     objectID: doc.id,
     ...doc
   }
 }
 
-function deserialize<T extends Unsearch.DocumentBase>(doc: Record<string, unknown | undefined>): T {
+function deserialize<T extends DocumentBase>(doc: Record<string, unknown | undefined>): T {
   return {
     ...doc,
     id: doc.objectID
   } as T
 }
 
-function ranking_keys(sort: Unsearch.SortField[]): string[] {
+function ranking_keys(sort: SortField[]): string[] {
   return sort.map(order => {
     return `${order.direction}(${order.field})`
   })

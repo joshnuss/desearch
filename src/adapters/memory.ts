@@ -1,8 +1,8 @@
-import type * as Unsearch from '../types.ts'
+import type { DocumentBase, Adapter, SearchOptions, FacetStats, SortField, SearchResult } from '../types.ts'
 import type * as filters from '../filters.ts'
 import Fuse  from 'fuse.js'
 
-export class Memory<T extends Unsearch.DocumentBase> implements Unsearch.Adapter<T> {
+export class Memory<T extends DocumentBase> implements Adapter<T> {
   #documents: Record<string, T>
   #pageSize: number
   #keys: string[]
@@ -19,7 +19,7 @@ export class Memory<T extends Unsearch.DocumentBase> implements Unsearch.Adapter
     return this.#documents[id] || null
   }
 
-  async search(query: string, options: Unsearch.Options): Promise<Unsearch.Result<T>> {
+  async search(query: string, options: SearchOptions): Promise<SearchResult<T>> {
     const { page, sort, filters } = options
 
     const docs = Object.values(this.#documents)
@@ -71,7 +71,7 @@ export class Memory<T extends Unsearch.DocumentBase> implements Unsearch.Adapter
   }
 }
 
-function order<T>(docs: T[], sort: Unsearch.SortField[]): T[] {
+function order<T>(docs: T[], sort: SortField[]): T[] {
   return docs.sort((a, b) => {
     for (const { field, direction } of sort) {
       if (a[field as keyof(T)] < b[field as keyof(T)]) return direction === 'asc' ? -1 : 1
@@ -117,8 +117,8 @@ function match<T>(doc: T, filter: filters.Filter): boolean {
   }
 }
 
-function aggregate_facets<T>(docs: T[], facets: string[]): Record<string, Unsearch.FacetStats> {
-  const results: Record<string, Unsearch.FacetStats> = {}
+function aggregate_facets<T>(docs: T[], facets: string[]): Record<string, FacetStats> {
+  const results: Record<string, FacetStats> = {}
 
   for (const doc of docs) {
     for (const facet of facets) {
@@ -138,13 +138,13 @@ function aggregate_facets<T>(docs: T[], facets: string[]): Record<string, Unsear
   return results
 }
 
-function increment_facet_array(results: Record<string, Unsearch.FacetStats>, facet: string, values: string[]) {
+function increment_facet_array(results: Record<string, FacetStats>, facet: string, values: string[]) {
   values.forEach(value => {
     increment_facet(results, facet, value)
   })
 }
 
-function increment_facet(results: Record<string, Unsearch.FacetStats>, facet: string, value: string) {
+function increment_facet(results: Record<string, FacetStats>, facet: string, value: string) {
   if (!results[facet]) results[facet] = {}
 
   if (!results[facet][value]) {

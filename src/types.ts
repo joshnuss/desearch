@@ -7,14 +7,14 @@ export interface SortField {
 
 export type Sort = string | Array<string | SortField>
 
-export interface Options {
+export interface SearchOptions {
   page: number
   sort: SortField[]
   facets: string[]
   filters: filters.Filter[]
 }
 
-export interface SoftOptions {
+export interface SoftSearchOptions {
   page?: string | number
   sort?: Sort
   facets?: string[]
@@ -23,7 +23,7 @@ export interface SoftOptions {
 
 export type FacetStats = Record<string, number>
 
-export interface Result<T> {
+export interface SearchResult<T> {
   query: string
   page: number
   total: {
@@ -42,7 +42,7 @@ export interface DocumentBase {
 
 export interface Adapter<T extends DocumentBase> {
   get(id: string): Promise<T | null>
-  search(query: string, options: Options): Promise<Result<T>>
+  search(query: string, options: SearchOptions): Promise<SearchResult<T>>
   submit(docs: T[]): Promise<void>
   delete(id: string): Promise<void>
   swap(newIndex: string): Promise<void>

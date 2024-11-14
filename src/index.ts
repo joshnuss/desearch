@@ -3,15 +3,15 @@ export { MeiliSearch } from './adapters/meilisearch.js'
 export { TypeSense } from './adapters/typesense.js'
 export { Memory } from './adapters/memory.js'
 
-import type * as Unsearch from './types.ts'
+export type * from './types.ts'
 import type * as filters from './filters.ts'
 
-export type { Unsearch }
+import type { Adapter, DocumentBase, SoftSearchOptions, SortField, Sort, SearchResult } from './types.ts'
 
-export class Index<T extends Unsearch.DocumentBase> {
-  #adapter: Unsearch.Adapter<T>
+export class Index<T extends DocumentBase> {
+  #adapter: Adapter<T>
 
-  constructor({adapter}: {adapter: Unsearch.Adapter<T>}) {
+  constructor({adapter}: {adapter: Adapter<T>}) {
     this.#adapter = adapter
   }
 
@@ -32,7 +32,7 @@ export class Index<T extends Unsearch.DocumentBase> {
     await this.#adapter.submit(docs)
   }
 
-  async search(query: string, options?: Unsearch.SoftOptions): Promise<Unsearch.Result<T>> {
+  async search(query: string, options?: SoftSearchOptions): Promise<SearchResult<T>> {
     const sort = normalize_sort_keys(options?.sort || [])
     const page: number = +(options?.page || 0)
     const facets: string[] = options?.facets || []
@@ -67,7 +67,7 @@ function normalize_filters(filters: filters.Filter | filters.Filter[]): filters.
   return [filters]
 }
 
-function normalize_sort_keys(sort: Unsearch.Sort): Required<Unsearch.SortField>[] {
+function normalize_sort_keys(sort: Sort): Required<SortField>[] {
   if (typeof(sort) == 'string') {
     return [{ field: sort, direction: 'asc' }]
   }
@@ -77,5 +77,5 @@ function normalize_sort_keys(sort: Unsearch.Sort): Required<Unsearch.SortField>[
       return { field: option, direction: 'asc' }
 
     return { field: option.field, direction: option.direction || 'asc'}
-  }) as Required<Unsearch.SortField>[]
+  }) as Required<SortField>[]
 }

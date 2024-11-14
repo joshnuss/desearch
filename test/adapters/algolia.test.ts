@@ -1,6 +1,5 @@
 import { Algolia } from '../../src/index.js'
-import { algoliasearch } from 'algoliasearch'
-import type { Unsearch } from '../../src/index.js'
+import type { SearchOptions } from '../../src/index.js'
 
 vi.mock('algoliasearch', () => {
   return {
@@ -294,7 +293,7 @@ describe('algolia', () => {
   })
 })
 
-function search_options(options: Partial<Unsearch.Options> = {}): Unsearch.Options {
+function search_options(options: Partial<SearchOptions> = {}): SearchOptions {
   return {
     page: 0,
     facets: [],
