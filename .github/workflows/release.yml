@@ -2,7 +2,7 @@ name: Release
 
 on:
   workflow_run:
-    workflows: ["ci"]
+    workflows: ["CI"]
     branches: [main]
     types:
       - completed
@@ -24,7 +24,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Setup Node.js 20
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
