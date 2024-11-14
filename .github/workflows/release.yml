@@ -2,7 +2,7 @@ name: Release
 
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ["CI/Build"]
     branches: [main]
     types:
       - completed
@@ -10,17 +10,13 @@ on:
 concurrency: ci-${{ github.ref }}
 
 jobs:
-  on-success:
+  release:
+    name: Release
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - run: echo 'The CI workflow passed'
 
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-
-    steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
