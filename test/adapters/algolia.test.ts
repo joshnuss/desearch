@@ -73,34 +73,59 @@ describe('algolia', () => {
 
   // TODO: search (+query, +facets, filters, +sort, +pagination)
   describe('search', () => {
-    test('query', async () => {
-      client.search.mockResolvedValue({
-        results: [
-          {
-            hits: [
-              { objectID: 'guides/react', title: 'React' },
-              { objectID: 'guides/svelte', title: 'Svelte' }
-            ],
-            nbHits: 50,
-            nbPages: 5,
-            page: 0
-          }
-        ]
+    describe('query', () => {
+      test('with results', async () => {
+        client.search.mockResolvedValue({
+          results: [
+            {
+              hits: [
+                { objectID: 'guides/react', title: 'React' },
+                { objectID: 'guides/svelte', title: 'Svelte' }
+              ],
+              nbHits: 50,
+              nbPages: 5,
+              page: 0
+            }
+          ]
+        })
+
+        const result = await adapter.search('some query', search_options())
+
+        expect(result.query).toEqual('some query')
+
+        expect(result.records).toEqual([
+          expect.objectContaining({ id: 'guides/react', title: 'React' }),
+          expect.objectContaining({ id: 'guides/svelte', title: 'Svelte' })
+        ])
+
+        expect(result.page).toEqual(0)
+        expect(result.total).toEqual({
+          pages: 5,
+          records: 50
+        })
       })
 
-      const result = await adapter.search('some query', search_options())
+      test('without results', async () => {
+        client.search.mockResolvedValue({
+          results: [
+            {
+              hits: [],
+              nbHits: undefined,
+              nbPages: 0,
+              page: 0
+            }
+          ]
+        })
 
-      expect(result.query).toEqual('some query')
+        const result = await adapter.search('some query', search_options())
 
-      expect(result.records).toEqual([
-        expect.objectContaining({ id: 'guides/react', title: 'React' }),
-        expect.objectContaining({ id: 'guides/svelte', title: 'Svelte' })
-      ])
-
-      expect(result.page).toEqual(0)
-      expect(result.total).toEqual({
-        pages: 5,
-        records: 50
+        expect(result.query).toEqual('some query')
+        expect(result.records).toEqual([])
+        expect(result.page).toEqual(0)
+        expect(result.total).toEqual({
+          pages: 0,
+          records: 0
+        })
       })
     })
 
