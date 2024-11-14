@@ -1,5 +1,6 @@
 export { Algolia } from './adapters/algolia.js'
 export { MeiliSearch } from './adapters/meilisearch.js'
+export { TypeSense } from './adapters/typesense.js'
 export { Memory } from './adapters/memory.js'
 
 import type * as Unsearch from './types.ts'
