@@ -2,7 +2,7 @@ name: Release
 
 on:
   workflow_run:
-    workflows: ["CI/Build"]
+    workflows: ["ci"]
     branches: [main]
     types:
       - completed
@@ -15,8 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - run: echo 'The CI workflow passed'
-
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
