@@ -1,7 +1,7 @@
 {
   "name": "desearch",
   "version": "0.0.1",
-  "description": "",
+  "description": "A set of adapters for working with common search engines",
   "type": "module",
   "scripts": {
     "test": "vitest",
@@ -17,9 +17,10 @@
     "algolia",
     "meilisearch",
     "typesense",
+    "elasticsearch",
     "fuse.js"
   ],
-  "author": "",
+  "author": "Josh Nussbaum",
   "license": "MIT",
   "main": "dist/src/index.js",
   "exports": {
