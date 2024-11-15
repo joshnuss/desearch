@@ -1,4 +1,4 @@
-unsearch
+desearch
 -----------
 
 A set of adapters for working with common search engines like [Algolia](https://algolia.com), [Meilisearch](https://meilisearch.com), [ElasticSearch](https://www.elastic.co), [Typesense](https://typesense.org) and [Fuse.js](https://www.fusejs.io)
@@ -10,7 +10,7 @@ A set of adapters for working with common search engines like [Algolia](https://
 Initialize an index with an adapter, for example Algolia:
 
 ```typescript
-import { Index, Algolia } from 'unsearch'
+import { Index, Algolia } from 'desearch'
 
 // define schema of document
 interface Document {
