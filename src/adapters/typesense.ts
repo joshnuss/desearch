@@ -1,21 +1,39 @@
-import type { Adapter, DocumentBase, SortField, SearchOptions, SearchResult, FacetStats } from '../types.js'
+import type {
+  Adapter,
+  DocumentBase,
+  SortField,
+  SearchOptions,
+  SearchResult,
+  FacetStats
+} from '../types.js'
 import { Client } from 'typesense'
 import type { ConfigurationOptions } from 'typesense/lib/Typesense/Configuration.d.ts'
-import type { DocumentSchema, SearchResponseFacetCountSchema } from 'typesense/lib/Typesense/Documents.d.ts'
+import type {
+  DocumentSchema,
+  SearchResponseFacetCountSchema
+} from 'typesense/lib/Typesense/Documents.d.ts'
 
 export class TypeSense<T extends DocumentBase> implements Adapter<T> {
   #collectionName: string
   #client: Client
   #pageSize: number
 
-  constructor({collectionName, pageSize, configuration}: {collectionName: string, pageSize?: number, configuration: ConfigurationOptions}) {
+  constructor({
+    collectionName,
+    pageSize,
+    configuration
+  }: {
+    collectionName: string
+    pageSize?: number
+    configuration: ConfigurationOptions
+  }) {
     this.#collectionName = collectionName
     this.#pageSize = pageSize || 10
     this.#client = new Client(configuration)
   }
 
   async get(id: string): Promise<T | null> {
-    const doc = await this.#client.collections(this.#collectionName).documents(id).retrieve() as T
+    const doc = (await this.#client.collections(this.#collectionName).documents(id).retrieve()) as T
 
     if (!doc) return null
 
@@ -42,20 +60,23 @@ export class TypeSense<T extends DocumentBase> implements Adapter<T> {
 
   async search(query: string, options: SearchOptions): Promise<SearchResult<T>> {
     const { sort, page, facets, filters } = options
-    const results = await this.#client.collections(this.#collectionName).documents().search({
-      q: query,
-      per_page: this.#pageSize,
-      page: page + 1,
-      sort_by: sort_to_string(sort),
-      facet_by: facets
-    })
+    const results = await this.#client
+      .collections(this.#collectionName)
+      .documents()
+      .search({
+        q: query,
+        per_page: this.#pageSize,
+        page: page + 1,
+        sort_by: sort_to_string(sort),
+        facet_by: facets
+      })
 
     const total_records = results.found
 
     return {
       query,
       sort,
-      records: (results.hits || []).map(hit => hit.document) as T[],
+      records: (results.hits || []).map((hit) => hit.document) as T[],
       page: (results.page || 1) - 1,
       total: {
         pages: Math.ceil(total_records / this.#pageSize),
@@ -68,12 +89,12 @@ export class TypeSense<T extends DocumentBase> implements Adapter<T> {
 }
 
 function sort_to_string(sort: SortField[]): string {
-  return sort
-    .map(option => `${option.field}:${option.direction}`)
-    .join(',')
+  return sort.map((option) => `${option.field}:${option.direction}`).join(',')
 }
 
-function extract_facets<T extends DocumentSchema>(stats: SearchResponseFacetCountSchema<T>[]): Record<string, FacetStats> {
+function extract_facets<T extends DocumentSchema>(
+  stats: SearchResponseFacetCountSchema<T>[]
+): Record<string, FacetStats> {
   const results: Record<string, FacetStats> = {}
 
   stats.forEach(({ counts, field_name }) => {

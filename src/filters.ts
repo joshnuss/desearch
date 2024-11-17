@@ -20,33 +20,30 @@ export interface Not {
   condition: Filter
 }
 
-export type Filter = Field
-  | Between
-  | Condition
-  | Not
+export type Filter = Field | Between | Condition | Not
 
 export function eq(field: string, value: unknown): Field {
-  return { field, op: '=', value}
+  return { field, op: '=', value }
 }
 
 export function neq(field: string, value: unknown): Field {
-  return { field, op: '!=', value}
+  return { field, op: '!=', value }
 }
 
 export function gt(field: string, value: unknown): Field {
-  return { field, op: '>', value}
+  return { field, op: '>', value }
 }
 
 export function gte(field: string, value: unknown): Field {
-  return { field, op: '>=', value}
+  return { field, op: '>=', value }
 }
 
 export function lt(field: string, value: unknown): Field {
-  return { field, op: '<', value}
+  return { field, op: '<', value }
 }
 
 export function lte(field: string, value: unknown): Field {
-  return { field, op: '<=', value}
+  return { field, op: '<=', value }
 }
 
 export function between(field: string, min: unknown, max: unknown): Between {

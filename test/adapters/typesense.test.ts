@@ -91,8 +91,8 @@ describe('typesense', () => {
       test('when found', async () => {
         documents.search.mockResolvedValue({
           hits: [
-            { document: { id: 'guides/react', title: 'React' }},
-            { document: { id: 'guides/svelte', title: 'Svelte' }}
+            { document: { id: 'guides/react', title: 'React' } },
+            { document: { id: 'guides/svelte', title: 'Svelte' } }
           ],
           found: 50,
           page: 1
@@ -100,9 +100,7 @@ describe('typesense', () => {
 
         const result = await adapter.search('some query', search_options())
 
-        expect(documents.search).toBeCalledWith(
-          expect.objectContaining({ q: 'some query' })
-        )
+        expect(documents.search).toBeCalledWith(expect.objectContaining({ q: 'some query' }))
 
         expect(result.query).toEqual('some query')
 
@@ -128,9 +126,7 @@ describe('typesense', () => {
 
         const result = await adapter.search('some query', search_options())
 
-        expect(documents.search).toBeCalledWith(
-          expect.objectContaining({ q: 'some query' })
-        )
+        expect(documents.search).toBeCalledWith(expect.objectContaining({ q: 'some query' }))
 
         expect(result.query).toEqual('some query')
 
@@ -148,8 +144,8 @@ describe('typesense', () => {
     test('facets', async () => {
       documents.search.mockResolvedValue({
         hits: [
-          { document: { id: 'guides/react', title: 'React' }},
-          { document: { id: 'guides/svelte', title: 'Svelte' }}
+          { document: { id: 'guides/react', title: 'React' } },
+          { document: { id: 'guides/svelte', title: 'Svelte' } }
         ],
         found: 50,
         page: 1,
@@ -171,7 +167,10 @@ describe('typesense', () => {
         ]
       })
 
-      const result = await adapter.search('some query', search_options({ facets: ['tags', 'date']}))
+      const result = await adapter.search(
+        'some query',
+        search_options({ facets: ['tags', 'date'] })
+      )
 
       expect(result.facets).toEqual({
         tags: {
@@ -192,20 +191,22 @@ describe('typesense', () => {
     test('sorting', async () => {
       documents.search.mockResolvedValue({
         hits: [
-          { document: { id: 'guides/react', title: 'React' }},
-          { document: { id: 'guides/svelte', title: 'Svelte' }}
+          { document: { id: 'guides/react', title: 'React' } },
+          { document: { id: 'guides/svelte', title: 'Svelte' } }
         ],
         found: 49,
-        page: 2,
+        page: 2
       })
 
-      const result = await adapter.search('some query',
+      const result = await adapter.search(
+        'some query',
         search_options({
           sort: [
             { field: 'title', direction: 'asc' },
             { field: 'id', direction: 'desc' }
           ]
-        }))
+        })
+      )
 
       expect(result.sort).toEqual([
         { field: 'title', direction: 'asc' },
@@ -222,8 +223,8 @@ describe('typesense', () => {
     test('pagination', async () => {
       documents.search.mockResolvedValue({
         hits: [
-          { document: { id: 'guides/react', title: 'React' }},
-          { document: { id: 'guides/svelte', title: 'Svelte' }}
+          { document: { id: 'guides/react', title: 'React' } },
+          { document: { id: 'guides/svelte', title: 'Svelte' } }
         ],
         found: 49,
         page: 2

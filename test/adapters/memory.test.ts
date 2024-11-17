@@ -22,9 +22,7 @@ describe('memory adapter', () => {
 
       const doc = await adapter.get('shirt')
 
-      expect(doc).toEqual(
-        expect.objectContaining({ id: 'shirt' })
-      )
+      expect(doc).toEqual(expect.objectContaining({ id: 'shirt' }))
     })
 
     test('when doc is missing', async () => {
@@ -40,7 +38,13 @@ describe('memory adapter', () => {
     const adapter = new Memory<Document>({
       keys: ['id', 'title', 'category'],
       documents: [
-        { id: 'shirt', category: 'shirts', title: 'T-Shirt', price: 20, tags: ['fall', 'warm', 'summer'] },
+        {
+          id: 'shirt',
+          category: 'shirts',
+          title: 'T-Shirt',
+          price: 20,
+          tags: ['fall', 'warm', 'summer']
+        },
         { id: 'pants', category: 'clothing', title: 'Pants', price: 40, tags: ['fall', 'summer'] },
         { id: 'socks', category: 'clothing', title: 'Socks', price: 10, tags: ['fall'] }
       ]
@@ -52,9 +56,7 @@ describe('memory adapter', () => {
 
         expect(result.query).toBe('shirt')
 
-        expect(result.records).toEqual([
-          expect.objectContaining({ id: 'shirt' })
-        ])
+        expect(result.records).toEqual([expect.objectContaining({ id: 'shirt' })])
 
         expect(result.total).toEqual({
           records: 1,
@@ -93,7 +95,8 @@ describe('memory adapter', () => {
 
     describe('filters', () => {
       test('eq', async () => {
-        const result = await adapter.search('',
+        const result = await adapter.search(
+          '',
           search_options({
             filters: [eq('category', 'clothing')]
           })
@@ -106,19 +109,19 @@ describe('memory adapter', () => {
       })
 
       test('neq', async () => {
-        const result = await adapter.search('',
+        const result = await adapter.search(
+          '',
           search_options({
             filters: [neq('category', 'clothing')]
           })
         )
 
-        expect(result.records).toEqual([
-          expect.objectContaining({ id: 'shirt' })
-        ])
+        expect(result.records).toEqual([expect.objectContaining({ id: 'shirt' })])
       })
 
       test('gt', async () => {
-        const result = await adapter.search('',
+        const result = await adapter.search(
+          '',
           search_options({
             filters: [gt('price', 10)]
           })
@@ -131,7 +134,8 @@ describe('memory adapter', () => {
       })
 
       test('gte', async () => {
-        const result = await adapter.search('',
+        const result = await adapter.search(
+          '',
           search_options({
             filters: [gte('price', 20)]
           })
@@ -144,7 +148,8 @@ describe('memory adapter', () => {
       })
 
       test('lt', async () => {
-        const result = await adapter.search('',
+        const result = await adapter.search(
+          '',
           search_options({
             filters: [lt('price', 40)]
           })
@@ -157,7 +162,8 @@ describe('memory adapter', () => {
       })
 
       test('lte', async () => {
-        const result = await adapter.search('',
+        const result = await adapter.search(
+          '',
           search_options({
             filters: [lte('price', 20)]
           })
@@ -170,7 +176,8 @@ describe('memory adapter', () => {
       })
 
       test('between', async () => {
-        const result = await adapter.search('',
+        const result = await adapter.search(
+          '',
           search_options({
             filters: [between('price', 10, 20)]
           })
@@ -183,7 +190,8 @@ describe('memory adapter', () => {
       })
 
       test('not', async () => {
-        const result = await adapter.search('',
+        const result = await adapter.search(
+          '',
           search_options({
             filters: [not(eq('price', 40))]
           })
@@ -195,15 +203,11 @@ describe('memory adapter', () => {
         ])
       })
 
-      test('and', async() => {
-        const result = await adapter.search('',
+      test('and', async () => {
+        const result = await adapter.search(
+          '',
           search_options({
-            filters: [
-              and(
-                gte('price', 10),
-                eq('category', 'clothing')
-              )
-            ]
+            filters: [and(gte('price', 10), eq('category', 'clothing'))]
           })
         )
 
@@ -213,15 +217,11 @@ describe('memory adapter', () => {
         ])
       })
 
-      test('or', async() => {
-        const result = await adapter.search('',
+      test('or', async () => {
+        const result = await adapter.search(
+          '',
           search_options({
-            filters: [
-              or(
-                eq('price', 40),
-                eq('price', 10)
-              )
-            ]
+            filters: [or(eq('price', 40), eq('price', 10))]
           })
         )
 
@@ -234,9 +234,7 @@ describe('memory adapter', () => {
 
     describe('facets', () => {
       test('when facets found', async () => {
-        const result = await adapter.search('',
-          search_options({ facets: ['category'] })
-        )
+        const result = await adapter.search('', search_options({ facets: ['category'] }))
 
         expect(result.records.length).toEqual(3)
         expect(result.facets).toEqual({
@@ -248,18 +246,14 @@ describe('memory adapter', () => {
       })
 
       test('when facets not found', async () => {
-        const result = await adapter.search('fugazi',
-          search_options({ facets: ['category'] })
-        )
+        const result = await adapter.search('fugazi', search_options({ facets: ['category'] }))
 
         expect(result.records.length).toEqual(0)
         expect(result.facets).toEqual({})
       })
 
       test('when multiple facets requests', async () => {
-        const result = await adapter.search('',
-          search_options({ facets: ['category', 'price'] })
-        )
+        const result = await adapter.search('', search_options({ facets: ['category', 'price'] }))
 
         expect(result.records.length).toEqual(3)
         expect(result.facets).toEqual({
@@ -276,18 +270,14 @@ describe('memory adapter', () => {
       })
 
       test('when facets not found', async () => {
-        const result = await adapter.search('',
-          search_options({ facets: ['fugazi'] })
-        )
+        const result = await adapter.search('', search_options({ facets: ['fugazi'] }))
 
         expect(result.records.length).toEqual(3)
         expect(result.facets).toEqual({})
       })
 
       test('when facet field is an array', async () => {
-        const result = await adapter.search('',
-          search_options({ facets: ['tags'] })
-        )
+        const result = await adapter.search('', search_options({ facets: ['tags'] }))
 
         expect(result.records.length).toEqual(3)
         expect(result.facets).toEqual({
@@ -306,7 +296,7 @@ describe('memory adapter', () => {
       beforeAll(async () => {
         const docs = []
 
-        for (let i=1; i<=38; i++) {
+        for (let i = 1; i <= 38; i++) {
           docs.push({
             id: String(i)
           })
@@ -320,11 +310,11 @@ describe('memory adapter', () => {
 
         expect(result.page).toEqual(0)
         expect(result.records).toEqual([
-          {id: "1"},
-          {id: "2"},
-          {id: "3"},
-          {id: "4"},
-          {id: "5"}
+          { id: '1' },
+          { id: '2' },
+          { id: '3' },
+          { id: '4' },
+          { id: '5' }
         ])
         expect(result.total).toEqual({
           pages: 8,
@@ -337,11 +327,11 @@ describe('memory adapter', () => {
 
         expect(result.page).toEqual(0)
         expect(result.records).toEqual([
-          {id: "1"},
-          {id: "2"},
-          {id: "3"},
-          {id: "4"},
-          {id: "5"}
+          { id: '1' },
+          { id: '2' },
+          { id: '3' },
+          { id: '4' },
+          { id: '5' }
         ])
         expect(result.total).toEqual({
           pages: 8,
@@ -354,11 +344,11 @@ describe('memory adapter', () => {
 
         expect(result.page).toEqual(1)
         expect(result.records).toEqual([
-          {id: "6"},
-          {id: "7"},
-          {id: "8"},
-          {id: "9"},
-          {id: "10"}
+          { id: '6' },
+          { id: '7' },
+          { id: '8' },
+          { id: '9' },
+          { id: '10' }
         ])
         expect(result.total).toEqual({
           pages: 8,
@@ -370,11 +360,7 @@ describe('memory adapter', () => {
         const result = await adapter.search('', search_options({ page: 7 }))
 
         expect(result.page).toEqual(7)
-        expect(result.records).toEqual([
-          {id: "36"},
-          {id: "37"},
-          {id: "38"}
-        ])
+        expect(result.records).toEqual([{ id: '36' }, { id: '37' }, { id: '38' }])
         expect(result.total).toEqual({
           pages: 8,
           records: 38
@@ -384,11 +370,10 @@ describe('memory adapter', () => {
 
     describe('sorting', () => {
       test('ascending', async () => {
-        const result = await adapter.search('',
+        const result = await adapter.search(
+          '',
           search_options({
-            sort: [
-              { field: 'price', direction: 'asc' }
-            ]
+            sort: [{ field: 'price', direction: 'asc' }]
           })
         )
 
@@ -400,11 +385,10 @@ describe('memory adapter', () => {
       })
 
       test('descending', async () => {
-        const result = await adapter.search('',
+        const result = await adapter.search(
+          '',
           search_options({
-            sort: [
-              { field: 'price', direction: 'desc' }
-            ]
+            sort: [{ field: 'price', direction: 'desc' }]
           })
         )
 
@@ -416,11 +400,12 @@ describe('memory adapter', () => {
       })
 
       test('with multiple keys', async () => {
-        const result = await adapter.search('',
+        const result = await adapter.search(
+          '',
           search_options({
             sort: [
               { field: 'category', direction: 'asc' },
-              { field: 'price', direction: 'desc' },
+              { field: 'price', direction: 'desc' }
             ]
           })
         )
@@ -444,23 +429,17 @@ describe('memory adapter', () => {
 
     let doc = await adapter.get('shirt')
 
-    expect(doc).toEqual(
-      expect.objectContaining({ id: 'shirt' })
-    )
+    expect(doc).toEqual(expect.objectContaining({ id: 'shirt' }))
 
     doc = await adapter.get('pants')
 
-    expect(doc).toEqual(
-      expect.objectContaining({ id: 'pants' })
-    )
+    expect(doc).toEqual(expect.objectContaining({ id: 'pants' }))
   })
 
   describe('delete', () => {
     test('when exists', async () => {
       const adapter = new Memory<Document>({
-        documents: [
-          { id: 'shirt', title: 'T-Shirt', price: 20 },
-        ]
+        documents: [{ id: 'shirt', title: 'T-Shirt', price: 20 }]
       })
 
       await adapter.delete('shirt')
@@ -473,16 +452,14 @@ describe('memory adapter', () => {
     test('when missing', async () => {
       const adapter = new Memory<Document>()
 
-      expect(adapter.delete('shirt'))
-        .resolves.not.toThrowError()
+      expect(adapter.delete('shirt')).resolves.not.toThrowError()
     })
   })
 
   test('swap', async () => {
     const adapter = new Memory<Document>()
 
-    expect(adapter.swap())
-      .resolves.not.toThrowError()
+    expect(adapter.swap()).resolves.not.toThrowError()
   })
 
   test('clear', async () => {
@@ -501,7 +478,7 @@ describe('memory adapter', () => {
   })
 })
 
-function search_options({...options} = {}): SearchOptions {
+function search_options({ ...options } = {}): SearchOptions {
   return {
     page: 0,
     sort: [],

@@ -12,14 +12,22 @@ export class MeiliSearch<T extends DocumentBase> implements Adapter<T> {
   #client: Client
   #pageSize: number
 
-  constructor({index, pageSize, credentials}: {index: string, pageSize?: number, credentials: MeiliSearchCredentials}) {
+  constructor({
+    index,
+    pageSize,
+    credentials
+  }: {
+    index: string
+    pageSize?: number
+    credentials: MeiliSearchCredentials
+  }) {
     this.#indexName = index
     this.#pageSize = pageSize || 10
     this.#client = new Client(credentials)
   }
 
   async get(id: string): Promise<T | null> {
-    const result = await this.#index().getDocument(escape_id(id)) as T
+    const result = (await this.#index().getDocument(escape_id(id))) as T
 
     if (!result) return null
 
@@ -35,9 +43,7 @@ export class MeiliSearch<T extends DocumentBase> implements Adapter<T> {
   }
 
   async swap(newIndex: string): Promise<void> {
-    await this.#client.swapIndexes([
-        { indexes: [ newIndex, this.#indexName ]}
-    ])
+    await this.#client.swapIndexes([{ indexes: [newIndex, this.#indexName] }])
   }
 
   async clear(): Promise<void> {
@@ -97,7 +103,7 @@ function unescape_id(id: string): string {
 }
 
 function sort_to_strings(sort: SortField[]): string[] {
-  return sort.map(option => {
+  return sort.map((option) => {
     return `${option.field}:${option.direction}`
   })
 }

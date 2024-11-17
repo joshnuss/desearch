@@ -85,10 +85,7 @@ describe('filters', () => {
   })
 
   test('and returns condition filter', () => {
-    const filter = and(
-      eq('author', 'josh'),
-      lt('price', 10)
-    )
+    const filter = and(eq('author', 'josh'), lt('price', 10))
 
     expect(filter).toEqual({
       op: 'and',
@@ -108,10 +105,7 @@ describe('filters', () => {
   })
 
   test('or returns condition filter', () => {
-    const filter = or(
-      eq('author', 'josh'),
-      lt('price', 10)
-    )
+    const filter = or(eq('author', 'josh'), lt('price', 10))
 
     expect(filter).toEqual({
       op: 'or',

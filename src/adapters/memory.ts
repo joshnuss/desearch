@@ -1,13 +1,20 @@
-import type { DocumentBase, Adapter, SearchOptions, FacetStats, SortField, SearchResult } from '../types.ts'
+import type {
+  DocumentBase,
+  Adapter,
+  SearchOptions,
+  FacetStats,
+  SortField,
+  SearchResult
+} from '../types.ts'
 import type * as filters from '../filters.ts'
-import Fuse  from 'fuse.js'
+import Fuse from 'fuse.js'
 
 export class Memory<T extends DocumentBase> implements Adapter<T> {
   #documents: Record<string, T>
   #pageSize: number
   #keys: string[]
 
-  constructor(options: { documents?: T[], pageSize?: number, keys?: string[] } = {}) {
+  constructor(options: { documents?: T[]; pageSize?: number; keys?: string[] } = {}) {
     this.#documents = {}
     this.#pageSize = options.pageSize || 10
     this.#keys = options.keys || []
@@ -29,7 +36,7 @@ export class Memory<T extends DocumentBase> implements Adapter<T> {
     let results
 
     if (query) {
-      results = fuse.search(query).map(result => result.item)
+      results = fuse.search(query).map((result) => result.item)
     } else {
       results = filtered
     }
@@ -54,7 +61,7 @@ export class Memory<T extends DocumentBase> implements Adapter<T> {
   }
 
   async submit(docs: T[]): Promise<void> {
-    docs.forEach(doc => {
+    docs.forEach((doc) => {
       this.#documents[doc.id] = doc
     })
   }
@@ -63,8 +70,7 @@ export class Memory<T extends DocumentBase> implements Adapter<T> {
     delete this.#documents[id]
   }
 
-  async swap(): Promise<void> {
-  }
+  async swap(): Promise<void> {}
 
   async clear(): Promise<void> {
     this.#documents = {}
@@ -74,8 +80,8 @@ export class Memory<T extends DocumentBase> implements Adapter<T> {
 function order<T>(docs: T[], sort: SortField[]): T[] {
   return docs.sort((a, b) => {
     for (const { field, direction } of sort) {
-      if (a[field as keyof(T)] < b[field as keyof(T)]) return direction === 'asc' ? -1 : 1
-      if (a[field as keyof(T)] > b[field as keyof(T)]) return direction === 'asc' ? 1 : -1
+      if (a[field as keyof T] < b[field as keyof T]) return direction === 'asc' ? -1 : 1
+      if (a[field as keyof T] > b[field as keyof T]) return direction === 'asc' ? 1 : -1
     }
 
     return 0
@@ -83,8 +89,8 @@ function order<T>(docs: T[], sort: SortField[]): T[] {
 }
 
 function filter<T>(docs: T[], filters: filters.Filter[]) {
-  return docs.filter(doc => {
-    return filters.every(filter => match(doc, filter))
+  return docs.filter((doc) => {
+    return filters.every((filter) => match(doc, filter))
   })
 }
 
@@ -92,24 +98,27 @@ function match<T>(doc: T, filter: filters.Filter): boolean {
   // TODO: handle arrays `if (Array.isArray(doc[field.field])) { }`
   switch (filter.op) {
     case '=':
-      return doc[filter.field as keyof(T)] == filter.value
+      return doc[filter.field as keyof T] == filter.value
     case '!=':
-      return doc[filter.field as keyof(T)] !== filter.value
+      return doc[filter.field as keyof T] !== filter.value
     case '>':
       // @ts-expect-error fixme
-      return doc[filter.field as keyof(T)] > filter.value
+      return doc[filter.field as keyof T] > filter.value
     case '>=':
       // @ts-expect-error fixme
-      return doc[filter.field as keyof(T)] >= filter.value
+      return doc[filter.field as keyof T] >= filter.value
     case '<':
       // @ts-expect-error fixme
-      return doc[filter.field as keyof(T)] < filter.value
+      return doc[filter.field as keyof T] < filter.value
     case '<=':
       // @ts-expect-error fixme
-      return doc[filter.field as keyof(T)] <= filter.value
+      return doc[filter.field as keyof T] <= filter.value
     case 'between':
       // @ts-expect-error fixme
-      return doc[filter.field as keyof(T)] >= filter.values[0] && doc[filter.field as keyof(T)] <= filter.values[1]
+      return (
+        doc[filter.field as keyof T] >= filter.values[0] &&
+        doc[filter.field as keyof T] <= filter.values[1]
+      )
     case 'not':
       return !match(doc, filter.condition)
 
@@ -129,12 +138,11 @@ function aggregate_facets<T>(docs: T[], facets: string[]): Record<string, FacetS
       // @ts-expect-error fixme
       const value = doc[facet]
 
-      if (typeof(value) == 'undefined') continue
+      if (typeof value == 'undefined') continue
 
       if (Array.isArray(value)) {
         increment_facet_array(results, facet, value)
-      }
-      else {
+      } else {
         increment_facet(results, facet, value)
       }
     }
@@ -143,8 +151,12 @@ function aggregate_facets<T>(docs: T[], facets: string[]): Record<string, FacetS
   return results
 }
 
-function increment_facet_array(results: Record<string, FacetStats>, facet: string, values: string[]) {
-  values.forEach(value => {
+function increment_facet_array(
+  results: Record<string, FacetStats>,
+  facet: string,
+  values: string[]
+) {
+  values.forEach((value) => {
     increment_facet(results, facet, value)
   })
 }

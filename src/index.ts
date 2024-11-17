@@ -6,12 +6,19 @@ export { Memory } from './adapters/memory.js'
 export type * from './types.ts'
 import type * as filters from './filters.ts'
 
-import type { Adapter, DocumentBase, SoftSearchOptions, SortField, Sort, SearchResult } from './types.ts'
+import type {
+  Adapter,
+  DocumentBase,
+  SoftSearchOptions,
+  SortField,
+  Sort,
+  SearchResult
+} from './types.ts'
 
 export class Index<T extends DocumentBase> {
   #adapter: Adapter<T>
 
-  constructor({adapter}: {adapter: Adapter<T>}) {
+  constructor({ adapter }: { adapter: Adapter<T> }) {
     this.#adapter = adapter
   }
 
@@ -68,14 +75,13 @@ function normalize_filters(filters: filters.Filter | filters.Filter[]): filters.
 }
 
 function normalize_sort_keys(sort: Sort): Required<SortField>[] {
-  if (typeof(sort) == 'string') {
+  if (typeof sort == 'string') {
     return [{ field: sort, direction: 'asc' }]
   }
 
-  return sort.map(option => {
-    if (typeof(option) == 'string')
-      return { field: option, direction: 'asc' }
+  return sort.map((option) => {
+    if (typeof option == 'string') return { field: option, direction: 'asc' }
 
-    return { field: option.field, direction: option.direction || 'asc'}
+    return { field: option.field, direction: option.direction || 'asc' }
   }) as Required<SortField>[]
 }

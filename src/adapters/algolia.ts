@@ -12,7 +12,15 @@ export class Algolia<T extends DocumentBase> implements Adapter<T> {
   #client: Algoliasearch
   #pageSize: number
 
-  constructor({index, pageSize, credentials}: {index: string, pageSize?: number, credentials: AlgoliaCredentials}) {
+  constructor({
+    index,
+    pageSize,
+    credentials
+  }: {
+    index: string
+    pageSize?: number
+    credentials: AlgoliaCredentials
+  }) {
     this.#index = index
     this.#pageSize = pageSize || 10
     this.#client = algoliasearch(credentials.appId, credentials.apiKey)
@@ -43,7 +51,7 @@ export class Algolia<T extends DocumentBase> implements Adapter<T> {
         }
       ]
     })
-    
+
     const result = results[0] as SearchResponse<T>
     const total_records = result.nbHits || 0
 
@@ -51,7 +59,7 @@ export class Algolia<T extends DocumentBase> implements Adapter<T> {
       query,
       sort,
       // @ts-expect-error fixme
-      records: result.hits.map(record => deserialize<T>(record)) as T[],
+      records: result.hits.map((record) => deserialize<T>(record)) as T[],
       page: result.page || 0,
       total: {
         pages: result.nbPages || 0,
@@ -65,7 +73,7 @@ export class Algolia<T extends DocumentBase> implements Adapter<T> {
   async submit(docs: T[]): Promise<void> {
     await this.#client.saveObjects({
       indexName: this.#index,
-      objects: docs.map(doc => serialize(doc) as unknown as Record<string, unknown>)
+      objects: docs.map((doc) => serialize(doc) as unknown as Record<string, unknown>)
     })
   }
 
@@ -109,7 +117,7 @@ function deserialize<T extends DocumentBase>(doc: Record<string, unknown | undef
 }
 
 function ranking_keys(sort: SortField[]): string[] {
-  return sort.map(order => {
+  return sort.map((order) => {
     return `${order.direction}(${order.field})`
   })
 }

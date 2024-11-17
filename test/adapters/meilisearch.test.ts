@@ -119,7 +119,10 @@ describe('meili', () => {
         }
       })
 
-      const result = await adapter.search('some query', search_options({ facets: ['tags', 'date']}))
+      const result = await adapter.search(
+        'some query',
+        search_options({ facets: ['tags', 'date'] })
+      )
 
       expect(result.facets).toEqual({
         tags: {
@@ -144,25 +147,25 @@ describe('meili', () => {
         facets: {}
       })
 
-      const result = await adapter.search('some query',
+      const result = await adapter.search(
+        'some query',
         search_options({
           sort: [
             { field: 'title', direction: 'asc' },
             { field: 'id', direction: 'desc' }
           ]
-        }))
+        })
+      )
 
       expect(result.sort).toEqual([
         { field: 'title', direction: 'asc' },
         { field: 'id', direction: 'desc' }
       ])
 
-      expect(index.search).toBeCalledWith('some query',
+      expect(index.search).toBeCalledWith(
+        'some query',
         expect.objectContaining({
-          sort: [
-            'title:asc',
-            'id:desc'
-          ]
+          sort: ['title:asc', 'id:desc']
         })
       )
     })

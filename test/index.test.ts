@@ -11,7 +11,7 @@ const adapter = {
   search: vi.fn(),
   delete: vi.fn(),
   swap: vi.fn(),
-  clear: vi.fn(),
+  clear: vi.fn()
 }
 
 const index = new Index<Document>({ adapter })
@@ -37,17 +37,11 @@ describe('index', () => {
     })
 
     test('multiple documents', async () => {
-      const docs = [
-        { id: '123' },
-        { id: '456' }
-      ]
+      const docs = [{ id: '123' }, { id: '456' }]
 
       await index.submit(docs)
 
-      expect(adapter.submit).toBeCalledWith([
-        { id: '123' },
-        { id: '456' }
-      ])
+      expect(adapter.submit).toBeCalledWith([{ id: '123' }, { id: '456' }])
     })
 
     test('no documents', async () => {
@@ -73,25 +67,22 @@ describe('index', () => {
       test('defaults to 0', async () => {
         await index.search('query')
 
-        expect(adapter.search).toBeCalledWith('query',
-          expect.objectContaining({ page: 0 })
-        )
+        expect(adapter.search).toBeCalledWith('query', expect.objectContaining({ page: 0 }))
       })
 
       test('converts string to number', async () => {
         await index.search('query', { page: '1' })
 
-        expect(adapter.search).toBeCalledWith('query',
-          expect.objectContaining({ page: 1 })
-        )
+        expect(adapter.search).toBeCalledWith('query', expect.objectContaining({ page: 1 }))
       })
     })
 
     test('passes facets', async () => {
       await index.search('query', { facets: ['tags', 'author'] })
 
-      expect(adapter.search).toBeCalledWith('query',
-        expect.objectContaining({ facets: [ 'tags', 'author' ] })
+      expect(adapter.search).toBeCalledWith(
+        'query',
+        expect.objectContaining({ facets: ['tags', 'author'] })
       )
     })
 
@@ -105,7 +96,8 @@ describe('index', () => {
           }
         })
 
-        expect(adapter.search).toBeCalledWith('query',
+        expect(adapter.search).toBeCalledWith(
+          'query',
           expect.objectContaining({
             filters: [
               {
@@ -123,11 +115,10 @@ describe('index', () => {
       test('single strings', async () => {
         await index.search('query', { sort: 'tags' })
 
-        expect(adapter.search).toBeCalledWith('query',
+        expect(adapter.search).toBeCalledWith(
+          'query',
           expect.objectContaining({
-            sort: [
-              { field: 'tags', direction: 'asc' },
-            ]
+            sort: [{ field: 'tags', direction: 'asc' }]
           })
         )
       })
@@ -135,7 +126,8 @@ describe('index', () => {
       test('field names as strings', async () => {
         await index.search('query', { sort: ['tags', 'author'] })
 
-        expect(adapter.search).toBeCalledWith('query',
+        expect(adapter.search).toBeCalledWith(
+          'query',
           expect.objectContaining({
             sort: [
               { field: 'tags', direction: 'asc' },
@@ -147,13 +139,11 @@ describe('index', () => {
 
       test('field names as objects', async () => {
         await index.search('query', {
-          sort: [
-            { field: 'tags' },
-            { field: 'author', direction: 'desc' }
-          ]
+          sort: [{ field: 'tags' }, { field: 'author', direction: 'desc' }]
         })
 
-        expect(adapter.search).toBeCalledWith('query',
+        expect(adapter.search).toBeCalledWith(
+          'query',
           expect.objectContaining({
             sort: [
               { field: 'tags', direction: 'asc' },
@@ -172,7 +162,6 @@ describe('index', () => {
 
     expect(adapter.delete).toBeCalledWith('example')
   })
-
 
   test('swap', async () => {
     adapter.swap.mockResolvedValue(null)

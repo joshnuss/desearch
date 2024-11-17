@@ -13,7 +13,7 @@ const client = {
   saveObjects: vi.fn(),
   clearObjects: vi.fn(),
   operationIndex: vi.fn(),
-  search: vi.fn(),
+  search: vi.fn()
 }
 
 interface Document {
@@ -151,7 +151,10 @@ describe('algolia', () => {
         ]
       })
 
-      const result = await adapter.search('some query', search_options({ facets: ['tags', 'date']}))
+      const result = await adapter.search(
+        'some query',
+        search_options({ facets: ['tags', 'date'] })
+      )
 
       expect(result.facets).toEqual({
         tags: {
@@ -181,13 +184,15 @@ describe('algolia', () => {
         ]
       })
 
-      const result = await adapter.search('some query',
+      const result = await adapter.search(
+        'some query',
         search_options({
           sort: [
             { field: 'title', direction: 'asc' },
             { field: 'id', direction: 'desc' }
           ]
-        }))
+        })
+      )
 
       expect(result.sort).toEqual([
         { field: 'title', direction: 'asc' },
@@ -199,10 +204,7 @@ describe('algolia', () => {
           expect.objectContaining({
             indexName: 'fake-index',
             query: 'some query',
-            customRanking: [
-              'asc(title)',
-              'desc(id)'
-            ]
+            customRanking: ['asc(title)', 'desc(id)']
           })
         ]
       })
@@ -288,7 +290,7 @@ describe('algolia', () => {
     await adapter.clear()
 
     expect(client.clearObjects).toBeCalledWith({
-      indexName: 'fake-index',
+      indexName: 'fake-index'
     })
   })
 })
