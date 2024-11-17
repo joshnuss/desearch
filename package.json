@@ -10,7 +10,8 @@
     "prepublish": "build && publint",
     "dev": "tsx index.ts",
     "check": "tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "format": "eslint . --fix"
   },
   "keywords": [
     "search",
@@ -35,6 +36,9 @@
     "@types/node": "^22.7.9",
     "@vitest/coverage-v8": "^2.1.4",
     "eslint": "^9.14.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
     "publint": "^0.2.12",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3",
