@@ -13,20 +13,18 @@ import type {
   SearchResponseFacetCountSchema
 } from 'typesense/lib/Typesense/Documents.d.ts'
 
+interface Options {
+  collectionName: string
+  pageSize?: number
+  configuration: ConfigurationOptions
+}
+
 export class TypeSense<T extends DocumentBase> implements Adapter<T> {
   #collectionName: string
   #client: Client
   #pageSize: number
 
-  constructor({
-    collectionName,
-    pageSize,
-    configuration
-  }: {
-    collectionName: string
-    pageSize?: number
-    configuration: ConfigurationOptions
-  }) {
+  constructor({ collectionName, pageSize, configuration }: Options) {
     this.#collectionName = collectionName
     this.#pageSize = pageSize || 10
     this.#client = new Client(configuration)

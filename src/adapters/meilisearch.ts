@@ -7,20 +7,18 @@ export interface MeiliSearchCredentials {
   apiKey: string
 }
 
+interface Options {
+  index: string
+  pageSize?: number
+  credentials: MeiliSearchCredentials
+}
+
 export class MeiliSearch<T extends DocumentBase> implements Adapter<T> {
   #indexName: string
   #client: Client
   #pageSize: number
 
-  constructor({
-    index,
-    pageSize,
-    credentials
-  }: {
-    index: string
-    pageSize?: number
-    credentials: MeiliSearchCredentials
-  }) {
+  constructor({ index, pageSize, credentials }: Options) {
     this.#indexName = index
     this.#pageSize = pageSize || 10
     this.#client = new Client(credentials)

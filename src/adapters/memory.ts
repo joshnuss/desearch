@@ -9,12 +9,18 @@ import type {
 import type * as filters from '../filters.ts'
 import Fuse from 'fuse.js'
 
+interface Options<T> {
+  documents?: T[]
+  pageSize?: number
+  keys?: string[]
+}
+
 export class Memory<T extends DocumentBase> implements Adapter<T> {
   #documents: Record<string, T>
   #pageSize: number
   #keys: string[]
 
-  constructor(options: { documents?: T[]; pageSize?: number; keys?: string[] } = {}) {
+  constructor(options: Options<T> = {}) {
     this.#documents = {}
     this.#pageSize = options.pageSize || 10
     this.#keys = options.keys || []

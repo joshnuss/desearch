@@ -7,20 +7,18 @@ export interface AlgoliaCredentials {
   apiKey: string
 }
 
+interface Options {
+  index: string
+  pageSize?: number
+  credentials: AlgoliaCredentials
+}
+
 export class Algolia<T extends DocumentBase> implements Adapter<T> {
   #index: string
   #client: Algoliasearch
   #pageSize: number
 
-  constructor({
-    index,
-    pageSize,
-    credentials
-  }: {
-    index: string
-    pageSize?: number
-    credentials: AlgoliaCredentials
-  }) {
+  constructor({ index, pageSize, credentials }: Options) {
     this.#index = index
     this.#pageSize = pageSize || 10
     this.#client = algoliasearch(credentials.appId, credentials.apiKey)
