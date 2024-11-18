@@ -35,10 +35,10 @@ export class Index<T extends DocumentBase> {
   }
 
   async search(query: string, options?: SoftSearchOptions): Promise<SearchResult<T>> {
-    const sort = normalize_sort_keys(options?.sort || [])
+    const sort = sort_keys(options?.sort || [])
     const page: number = +(options?.page || 0)
     const facets: string[] = options?.facets || []
-    const filters: filters.Filter[] = normalize_filters(options?.filters || [])
+    const filters: filters.Filter[] = to_array(options?.filters || [])
 
     return await this.#adapter.search(query, {
       page,
@@ -61,30 +61,18 @@ export class Index<T extends DocumentBase> {
   }
 }
 
-function normalize_filters(filters: filters.Filter | filters.Filter[]): filters.Filter[] {
-  if (Array.isArray(filters)) {
-    return filters
-  }
-
-  return [filters]
-}
-
-function normalize_sort_keys(sort: Sort): Required<SortField>[] {
+function sort_keys(sort: Sort): Required<SortField>[] {
   if (typeof sort == 'string') {
     return [{ field: sort, direction: 'asc' }]
   }
 
-  return sort.map((option) => {
-    if (typeof option == 'string') return { field: option, direction: 'asc' }
+  return sort.map((item) => {
+    if (typeof item == 'string') return { field: item, direction: 'asc' }
 
-    return { field: option.field, direction: option.direction || 'asc' }
-  }) as Required<SortField>[]
+    return { field: item.field, direction: item.direction || 'asc' }
+  })
 }
 
-function to_array<T>(item_or_array: T | T[]): T[] {
-  if (Array.isArray(item_or_array)) {
-    return item_or_array
-  }
-
-  return [item_or_array]
+function to_array<T>(data: T | T[]): T[] {
+  return Array.isArray(data) ? data : [data]
 }
