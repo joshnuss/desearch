@@ -25,19 +25,25 @@ export class MeiliSearch<T extends DocumentBase> implements Adapter<T> {
   }
 
   async get(id: string): Promise<T | null> {
-    const result = (await this.#index().getDocument(escape_id(id))) as T
+    id = escape_id(id)
+
+    const result = await this.#index().getDocument(id)
 
     if (!result) return null
 
-    return deserialize(result)
+    return deserialize(result as T)
   }
 
   async submit(docs: T[]): Promise<void> {
-    await this.#index().addDocuments(docs.map(serialize))
+    const serialized = docs.map(serialize)
+
+    await this.#index().addDocuments(serialized)
   }
 
   async delete(id: string): Promise<void> {
-    await this.#index().deleteDocument(escape_id(id))
+    id = escape_id(id)
+
+    await this.#index().deleteDocument(id)
   }
 
   async swap(newIndex: string): Promise<void> {
@@ -52,7 +58,7 @@ export class MeiliSearch<T extends DocumentBase> implements Adapter<T> {
     const { sort, page, facets, filters } = options
     const results = await this.#index().search(query, {
       page,
-      sort: sort_to_strings(sort),
+      sort: sort_strings(sort),
       hitsPerPage: this.#pageSize,
       facets
     })
@@ -100,7 +106,7 @@ function unescape_id(id: string): string {
   return id.replace(/--/g, '/')
 }
 
-function sort_to_strings(sort: SortField[]): string[] {
+function sort_strings(sort: SortField[]): string[] {
   return sort.map((option) => {
     return `${option.field}:${option.direction}`
   })
