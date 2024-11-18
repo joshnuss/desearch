@@ -27,14 +27,9 @@ export class Index<T extends DocumentBase> {
   }
 
   async submit(docs_or_doc: T | T[]): Promise<void> {
-    let docs: T[]
+    const docs = to_array(docs_or_doc)
 
-    if (Array.isArray(docs_or_doc)) {
-      docs = docs_or_doc
-      if (!docs.length) return
-    } else {
-      docs = [docs_or_doc]
-    }
+    if (!docs.length) return
 
     await this.#adapter.submit(docs)
   }
@@ -84,4 +79,12 @@ function normalize_sort_keys(sort: Sort): Required<SortField>[] {
 
     return { field: option.field, direction: option.direction || 'asc' }
   }) as Required<SortField>[]
+}
+
+function to_array<T>(item_or_array: T | T[]): T[] {
+  if (Array.isArray(item_or_array)) {
+    return item_or_array
+  }
+
+  return [item_or_array]
 }
