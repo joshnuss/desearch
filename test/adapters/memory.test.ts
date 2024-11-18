@@ -1,8 +1,8 @@
 import { Memory } from '../../src/index.js'
-import type { SearchOptions } from '../../src/index.js'
+import type { SearchOptions, DocumentBase } from '../../src/index.js'
 import { eq, neq, gt, gte, lt, lte, between, not, and, or } from '../../src/filters.js'
 
-interface Document {
+interface Document extends DocumentBase {
   id: string
   title: string
   category?: string

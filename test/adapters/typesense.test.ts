@@ -1,5 +1,5 @@
 import { TypeSense } from '../../src/index.js'
-import type { SearchOptions } from '../../src/index.js'
+import type { SearchOptions, DocumentBase } from '../../src/index.js'
 
 vi.mock('typesense', () => {
   return {
@@ -27,7 +27,7 @@ const aliases = {
   upsert: vi.fn()
 }
 
-interface Document {
+interface Document extends DocumentBase {
   id: string
   title: string
 }

@@ -58,8 +58,7 @@ export class Algolia<T extends DocumentBase> implements Adapter<T> {
     return {
       query,
       sort,
-      // @ts-expect-error fixme
-      records: result.hits.map((record) => deserialize<T>(record)) as T[],
+      records: result.hits.map<T>(deserialize),
       page: result.page || 0,
       total: {
         pages: result.nbPages || 0,
@@ -73,7 +72,7 @@ export class Algolia<T extends DocumentBase> implements Adapter<T> {
   async submit(docs: T[]): Promise<void> {
     await this.#client.saveObjects({
       indexName: this.#index,
-      objects: docs.map((doc) => serialize(doc) as unknown as Record<string, unknown>)
+      objects: docs.map(serialize)
     })
   }
 

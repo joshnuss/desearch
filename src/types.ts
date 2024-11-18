@@ -38,6 +38,7 @@ export interface SearchResult<T> {
 
 export interface DocumentBase {
   id: string
+  [key: string]: unknown
 }
 
 export interface Adapter<T extends DocumentBase> {

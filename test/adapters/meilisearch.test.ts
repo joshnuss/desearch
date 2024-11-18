@@ -1,5 +1,5 @@
 import { MeiliSearch } from '../../src/index.js'
-import type { SearchOptions } from '../../src/index.js'
+import type { SearchOptions, DocumentBase } from '../../src/index.js'
 
 vi.mock('meilisearch', () => {
   return {
@@ -20,7 +20,7 @@ const index = {
   search: vi.fn()
 }
 
-interface Document {
+interface Document extends DocumentBase {
   id: string
   title: string
 }
