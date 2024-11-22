@@ -1,6 +1,6 @@
 export interface Field {
   field: string
-  op: '=' | '!=' | '<' | '<=' | '>' | '>='
+  op: '=' | '!=' | '<' | '<=' | '>' | '>=' | 'in'
   value: unknown
 }
 
@@ -44,6 +44,10 @@ export function lt(field: string, value: unknown): Field {
 
 export function lte(field: string, value: unknown): Field {
   return { field, op: '<=', value }
+}
+
+export function has(field: string, value: unknown): Field {
+  return { field, op: 'in', value }
 }
 
 export function between(field: string, min: unknown, max: unknown): Between {

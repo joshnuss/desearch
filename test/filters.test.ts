@@ -1,4 +1,4 @@
-import { eq, neq, gt, gte, lt, lte, between, not, and, or } from '../src/filters.js'
+import { eq, neq, gt, gte, lt, lte, has, between, not, and, or } from '../src/filters.js'
 
 describe('filters', () => {
   test('eq returns field filter', () => {
@@ -58,6 +58,16 @@ describe('filters', () => {
       op: '<=',
       field: 'price',
       value: 10
+    })
+  })
+
+  test('has returns field filter', () => {
+    const filter = has('price', [1, 2, 3])
+
+    expect(filter).toEqual({
+      op: 'in',
+      field: 'price',
+      value: [1, 2, 3]
     })
   })
 
