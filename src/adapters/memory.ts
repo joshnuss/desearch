@@ -120,9 +120,10 @@ function match<T>(doc: T, filter: filters.Filter): boolean {
       // @ts-expect-error fixme
       return doc[filter.field as keyof T] <= filter.value
     case 'between':
-      // @ts-expect-error fixme
       return (
+        // @ts-expect-error fixme
         doc[filter.field as keyof T] >= filter.values[0] &&
+        // @ts-expect-error fixme
         doc[filter.field as keyof T] <= filter.values[1]
       )
     case 'not':
