@@ -119,6 +119,9 @@ function match<T>(doc: T, filter: filters.Filter): boolean {
     case '<=':
       // @ts-expect-error fixme
       return doc[filter.field as keyof T] <= filter.value
+    case 'in':
+      // @ts-expect-error fixme
+      return filter.value.some((value) => doc[filter.field as keyof T] == value)
     case 'between':
       return (
         // @ts-expect-error fixme

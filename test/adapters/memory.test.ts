@@ -1,6 +1,6 @@
 import { Memory } from '../../src/index.js'
 import type { SearchOptions, DocumentBase } from '../../src/index.js'
-import { eq, neq, gt, gte, lt, lte, between, not, and, or } from '../../src/filters.js'
+import { eq, neq, gt, gte, lt, lte, has, between, not, and, or } from '../../src/filters.js'
 
 interface Document extends DocumentBase {
   id: string
@@ -166,6 +166,20 @@ describe('memory adapter', () => {
           '',
           search_options({
             filters: [lte('price', 20)]
+          })
+        )
+
+        expect(result.records).toEqual([
+          expect.objectContaining({ id: 'shirt' }),
+          expect.objectContaining({ id: 'socks' })
+        ])
+      })
+
+      test('has', async () => {
+        const result = await adapter.search(
+          '',
+          search_options({
+            filters: [has('price', [10, 20])]
           })
         )
 
