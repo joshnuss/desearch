@@ -5,8 +5,7 @@ import type {
   FacetStats,
   SortField,
   SearchResult,
-  Filters,
-  FieldFilter
+  Filters
 } from '../types.ts'
 import Fuse from 'fuse.js'
 
@@ -15,10 +14,6 @@ interface Options<T> {
   pageSize?: number
   keys?: string[]
 }
-
-type Entries<T> = {
-  [K in keyof T]: [K, T[K]]
-}[keyof T][]
 
 export class Memory<T extends DocumentBase> implements Adapter<T> {
   #documents: Record<string, T>
