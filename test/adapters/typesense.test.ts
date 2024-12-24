@@ -81,7 +81,6 @@ describe('typesense', () => {
     })
   })
 
-  // TODO: search (+query, +facets, filters, +sort, +pagination)
   describe('search', () => {
     beforeEach(() => {
       collection.documents.mockReturnValue(documents)
@@ -244,6 +243,149 @@ describe('typesense', () => {
           page: 3
         })
       )
+    })
+
+    describe('filtering', () => {
+      beforeEach(() => {
+        documents.search.mockResolvedValue({
+          hits: [{ document: { id: 'guides/svelte', title: 'Svelte', priority: 10 } }],
+          found: 49,
+          page: 2
+        })
+      })
+
+      const filters = {
+        multiple: {
+          values: {
+            filters: {
+              title: { eq: 'Svelte' },
+              priority: { gt: 10 }
+            },
+            actual: 'title:Svelte && priority:>10'
+          }
+        },
+        eq: {
+          string: {
+            filters: { title: { eq: 'Svelte' } },
+            actual: 'title:Svelte'
+          },
+          number: {
+            filters: { priority: { eq: 1 } },
+            actual: 'priority:1'
+          }
+        },
+        neq: {
+          string: {
+            filters: { title: { neq: 'Svelte' } },
+            actual: 'title:!=Svelte'
+          },
+          number: {
+            filters: { priority: { neq: 1 } },
+            actual: 'priority:!=1'
+          }
+        },
+        lt: {
+          string: {
+            filters: { title: { lt: 'Svelte' } },
+            actual: 'title:>Svelte'
+          },
+          number: {
+            filters: { priority: { lt: 1 } },
+            actual: 'priority:>1'
+          }
+        },
+        lte: {
+          string: {
+            filters: { title: { lte: 'Svelte' } },
+            actual: 'title:>=Svelte'
+          },
+          number: {
+            filters: { priority: { lte: 1 } },
+            actual: 'priority:>=1'
+          }
+        },
+        gt: {
+          string: {
+            filters: { title: { gt: 'Svelte' } },
+            actual: 'title:>Svelte'
+          },
+          number: {
+            filters: { priority: { gt: 1 } },
+            actual: 'priority:>1'
+          }
+        },
+        gte: {
+          string: {
+            filters: { title: { gte: 'Svelte' } },
+            actual: 'title:>=Svelte'
+          },
+          number: {
+            filters: { priority: { gte: 1 } },
+            actual: 'priority:>=1'
+          }
+        },
+        in: {
+          string: {
+            filters: { title: { in: ['Svelte', 'React'] } },
+            actual: 'title:[Svelte, React]'
+          },
+          number: {
+            filters: { priority: { in: [1, 2] } },
+            actual: 'priority:[1, 2]'
+          }
+        },
+        between: {
+          string: {
+            filters: { title: { between: ['a', 'z'] } },
+            actual: 'title:[a..z]'
+          },
+          number: {
+            filters: { priority: { between: [1, 10] } },
+            actual: 'priority:[1..10]'
+          }
+        },
+        conditions: {
+          and: {
+            filters: {
+              and: [{ title: { eq: 'Svelte' }, priority: { gt: 10 } }, { priority: { eq: 1 } }]
+            },
+            actual: '(title:Svelte && priority:>10) && (priority:1)'
+          },
+          or: {
+            filters: {
+              or: [{ title: { eq: 'Svelte' }, priority: { gt: 10 } }, { priority: { eq: 1 } }]
+            },
+            actual: '(title:Svelte && priority:>10) || (priority:1)'
+          },
+          not: {
+            filters: {
+              not: {
+                title: { eq: 'Svelte' },
+                priority: { gt: 10 }
+              }
+            },
+            actual: 'NOT (title:Svelte && priority:>10)'
+          }
+        }
+      }
+
+      Object.entries(filters).forEach(([key, tests]) => {
+        describe(key, () => {
+          Object.entries(tests).forEach(([key, { filters, actual }]) => {
+            test(key, async () => {
+              const result = await adapter.search('some query', search_options({ filters }))
+
+              expect(documents.search).toBeCalledWith(
+                expect.objectContaining({
+                  filter_by: actual
+                })
+              )
+
+              expect(result.filters).toEqual(filters)
+            })
+          })
+        })
+      })
     })
   })
 

@@ -4,7 +4,8 @@ import type {
   SortField,
   SearchOptions,
   SearchResult,
-  FacetStats
+  FacetStats,
+  Filters
 } from '../types.js'
 import { Client } from 'typesense'
 import type { ConfigurationOptions } from 'typesense/lib/Typesense/Configuration.d.ts'
@@ -66,7 +67,8 @@ export class TypeSense<T extends DocumentBase> implements Adapter<T> {
         per_page: this.#pageSize,
         page: page + 1,
         sort_by: sort_to_string(sort),
-        facet_by: facets
+        facet_by: facets,
+        filter_by: build_filters(filters)
       })
 
     const total_records = results.found
@@ -104,4 +106,78 @@ function extract_facets<T extends DocumentSchema>(
   })
 
   return results
+}
+
+function build_filters<T>(filters?: Filters<T>): string | undefined {
+  if (!filters) return
+
+  const bracket = (str: string | undefined): string => {
+    return `(${str})`
+  }
+
+  if ('and' in filters) {
+    return filters['and'].map(build_filters).map(bracket).join(' && ')
+  }
+
+  if ('or' in filters) {
+    return filters['or'].map(build_filters).map(bracket).join(' || ')
+  }
+
+  if ('not' in filters) {
+    return `NOT (${build_filters(filters['not'])})`
+  }
+
+  const conditions: string[] = []
+
+  for (const key of Object.keys(filters)) {
+    // @ts-expect-error fixme
+    const match = filters[key]
+
+    if ('eq' in match) {
+      conditions.push(`${key}:${format_type(match['eq'])}`)
+      continue
+    }
+
+    if ('neq' in match) {
+      conditions.push(`${key}:!=${format_type(match['neq'])}`)
+      continue
+    }
+
+    if ('lt' in match) {
+      conditions.push(`${key}:>${format_type(match['lt'])}`)
+      continue
+    }
+
+    if ('lte' in match) {
+      conditions.push(`${key}:>=${format_type(match['lte'])}`)
+      continue
+    }
+
+    if ('gt' in match) {
+      conditions.push(`${key}:>${format_type(match['gt'])}`)
+      continue
+    }
+
+    if ('gte' in match) {
+      conditions.push(`${key}:>=${format_type(match['gte'])}`)
+      continue
+    }
+
+    if ('in' in match) {
+      conditions.push(`${key}:[${match['in'].map(format_type).join(', ')}]`)
+      continue
+    }
+
+    if ('between' in match) {
+      const [from, to] = match['between']
+      conditions.push(`${key}:[${format_type(from)}..${format_type(to)}]`)
+      continue
+    }
+  }
+
+  return conditions.join(' && ')
+}
+
+function format_type(value: string | unknown): string {
+  return String(value)
 }
