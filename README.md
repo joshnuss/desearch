@@ -8,7 +8,7 @@ A toolkit for searching data.
 ## Features
 
 - **Multiple adapters**: Supports [Algolia](https://algolia.com), [Meilisearch](https://meilisearch.com), [ElasticSearch](https://www.elastic.co), [Typesense](https://typesense.org) and [Fuse.js](https://www.fusejs.io).
-- **Memory adapter**: Can run searches in-memory. Suitable for small datasets.
+- **Memory adapter**: Can run searches in-memory. Suitable for small datasets or in dev/test mode.
 - **Fulltext search**: Search content by text.
 - **Sorting**: Sort results by any field.
 - **Pagination**: Paginate search results.
