@@ -118,58 +118,61 @@ function match<T>(doc: T, filters: Filters<T>): boolean {
     return !match(doc, filters.not)
   }
 
-  for (const [field, matches] of Object.entries(filters) as Entries<FieldFilter<T>>) {
+  for (const field of Object.keys(filters) as [keyof Filters<T>]) {
+    const matches = filters[field]
+
     if ('eq' in matches) {
-      return doc[field] == matches.eq
+      return doc[field] == matches['eq']
     }
 
     if ('neq' in matches) {
-      return doc[field] != matches.neq
+      return doc[field] != matches['neq']
     }
 
     if ('gt' in matches) {
-      if (!matches.gt) {
-        throw new Error(`${String(field)}.gt is not defined`)
+      if (!matches['gt']) {
+        throw new Error(`${field}.gt is not defined`)
       }
 
-      return doc[field] > matches.gt
+      return doc[field] > matches['gt']
     }
 
     if ('gte' in matches) {
-      if (!matches.gte) {
-        throw new Error(`${String(field)}.gte is not defined`)
+      if (!matches['gte']) {
+        throw new Error(`${field}.gte is not defined`)
       }
 
-      return doc[field] >= matches.gte
+      return doc[field] >= matches['gte']
     }
 
     if ('lt' in matches) {
-      if (!matches.lt) {
-        throw new Error(`${String(field)}.lt is not defined`)
+      if (!matches['lt']) {
+        throw new Error(`${field}.lt is not defined`)
       }
 
-      return doc[field] < matches.lt
+      return doc[field] < matches['lt']
     }
 
     if ('lte' in matches) {
-      if (!matches.lte) {
-        throw new Error(`${String(field)}.lte is not defined`)
+      if (!matches['lte']) {
+        throw new Error(`${field}.lte is not defined`)
       }
 
-      return doc[field] <= matches.lte
+      return doc[field] <= matches['lte']
     }
 
     if ('in' in matches) {
-      if (!matches.in) {
-        throw new Error(`${String(field)}.in is not defined`)
+      if (!matches['in']) {
+        throw new Error(`${field}.in is not defined`)
       }
 
-      return matches.in.some((value) => doc[field] == value)
+      // @ts-expect-error type on in will always match
+      return matches['in'].some((value) => doc[field] == value)
     }
 
     if ('between' in matches) {
-      if (!matches.between) {
-        throw new Error(`${String(field)}.between is not defined`)
+      if (!matches['between']) {
+        throw new Error(`${field}.between is not defined`)
       }
 
       const { between } = matches

@@ -6,7 +6,7 @@ export interface SortField {
 export type Sort = string | Array<string | SortField>
 
 export type FieldFilter<T> = {
-  [Key in keyof T]: {
+  [Key in keyof T]?: {
     eq?: T[Key]
     neq?: T[Key]
     lt?: T[Key]
