@@ -7,15 +7,15 @@ A toolkit for working with common search engines like [Algolia](https://algolia.
 
 ## Features
 
-- Multiple adapters: Supports Algolia, MeiliSearch, TypeSense, and ElasticSearch.
-- Memory adapter: Can run searches in-memory. Suitable for small datasets.
-- Fulltext search: Search content by text.
-- Sorting: Sort results by any field.
-- Pagination: Paginate search results.
-- Filtering: Filters data by `=`, `!=`, `<`, `<=`, `>`, `>=`, `between` and `in`.
-- Facets: Returns stats about available results.
-- Indexing: Submits JSON documents to search engine for indexing.
-- TypeScript: Fully typed.
+- **Multiple adapters**: Supports Algolia, MeiliSearch, TypeSense, and ElasticSearch.
+- **Memory adapter**: Can run searches in-memory. Suitable for small datasets.
+- **Fulltext search**: Search content by text.
+- **Sorting**: Sort results by any field.
+- **Pagination**: Paginate search results.
+- **Filtering**: Filters data by `=`, `!=`, `<`, `<=`, `>`, `>=`, `between` and `in`.
+- **Facets**: Returns stats about available results.
+- **Document Indexing**: Submits JSON documents to search engine for indexing.
+- **TypeScript**: Fully typed.
 
 ## Usage
 
