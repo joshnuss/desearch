@@ -1,19 +1,21 @@
 desearch
 -----------
 
-A set of adapters for working with common search engines like [Algolia](https://algolia.com), [Meilisearch](https://meilisearch.com), [ElasticSearch](https://www.elastic.co), [Typesense](https://typesense.org) and [Fuse.js](https://www.fusejs.io)
+A toolkit for working with common search engines like [Algolia](https://algolia.com), [Meilisearch](https://meilisearch.com), [ElasticSearch](https://www.elastic.co), [Typesense](https://typesense.org) and [Fuse.js](https://www.fusejs.io)
 
 **🚧 In active development, don't use yet 🚧**
 
 ## Features
 
-- Multiple adapters
-- Memory
-- Pagination
-- Sorting
-- Filtering
-- Facets
-- Indexing
+- Multiple adapters: Supports Algolia, MeiliSearch, TypeSense, and ElasticSearch.
+- Memory adapter: Can run searches in-memory. Suitable for small datasets.
+- Fulltext search: Search content by text.
+- Sorting: Sort results by any field.
+- Pagination: Paginate search results.
+- Filtering: Filters data by `=`, `!=`, `<`, `<=`, `>`, `>=`, `between` and `in`.
+- Facets: Returns stats about available results.
+- Indexing: Submits JSON documents to search engine for indexing.
+- TypeScript: Fully typed.
 
 ## Usage
 
