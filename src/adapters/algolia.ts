@@ -1,4 +1,11 @@
-import type { Adapter, DocumentBase, SearchOptions, SearchResult, SortField } from '../types.js'
+import type {
+  Adapter,
+  DocumentBase,
+  SearchOptions,
+  SearchResult,
+  SortField,
+  Filters
+} from '../types.js'
 import { algoliasearch } from 'algoliasearch'
 import type { Algoliasearch, SearchResponse } from 'algoliasearch'
 
@@ -45,7 +52,8 @@ export class Algolia<T extends DocumentBase> implements Adapter<T> {
           page,
           hitsPerPage: this.#pageSize,
           facets,
-          customRanking: ranking_keys(sort)
+          customRanking: ranking_keys(sort),
+          filters: build_filters<T>(filters)
         }
       ]
     })
@@ -117,4 +125,79 @@ function ranking_keys(sort: SortField[]): string[] {
   return sort.map((order) => {
     return `${order.direction}(${order.field})`
   })
+}
+
+function build_filters<T>(filters?: Filters<T>): string | undefined {
+  if (!filters) return
+
+  const bracket = (str: string | undefined): string => {
+    return `(${str})`
+  }
+
+  if ('and' in filters) {
+    return filters['and'].map(build_filters).map(bracket).join(' AND ')
+  }
+
+  if ('or' in filters) {
+    return filters['or'].map(build_filters).map(bracket).join(' OR ')
+  }
+
+  if ('not' in filters) {
+    return `NOT ${build_filters(filters['not'])}`
+  }
+
+  const conditions: string[] = []
+
+  for (const key of Object.keys(filters)) {
+    // @ts-expect-error fixme
+    const match = filters[key]
+
+    if ('eq' in match) {
+      conditions.push(`${key}:${format_type(match['eq'])}`)
+      continue
+    }
+
+    if ('neq' in match) {
+      conditions.push(`NOT ${key}:${format_type(match['neq'])}`)
+      continue
+    }
+
+    if ('lt' in match) {
+      conditions.push(`${key} > ${format_type(match['lt'])}`)
+      continue
+    }
+
+    if ('lte' in match) {
+      conditions.push(`${key} >= ${format_type(match['lte'])}`)
+      continue
+    }
+
+    if ('gt' in match) {
+      conditions.push(`${key} > ${format_type(match['gt'])}`)
+      continue
+    }
+
+    if ('gte' in match) {
+      conditions.push(`${key} >= ${format_type(match['gte'])}`)
+      continue
+    }
+
+    if ('in' in match) {
+      // @ts-expect-error fixme
+      conditions.push(match['in'].map((value) => `${key}:${format_type(value)}`).join(' OR '))
+      continue
+    }
+
+    if ('between' in match) {
+      const [from, to] = match['between']
+      conditions.push(`${key}:${format_type(from)} TO ${format_type(to)}`)
+      continue
+    }
+  }
+
+  return conditions.join(' AND ')
+}
+
+function format_type(value: string | unknown): string {
+  return String(value)
 }
