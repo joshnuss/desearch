@@ -1,13 +1,13 @@
 desearch
 -----------
 
-A toolkit for working with common search engines like [Algolia](https://algolia.com), [Meilisearch](https://meilisearch.com), [ElasticSearch](https://www.elastic.co), [Typesense](https://typesense.org) and [Fuse.js](https://www.fusejs.io)
+A toolkit for searching data.
 
 **🚧 In active development, don't use yet 🚧**
 
 ## Features
 
-- **Multiple adapters**: Supports Algolia, MeiliSearch, TypeSense, and ElasticSearch.
+- **Multiple adapters**: Supports [Algolia](https://algolia.com), [Meilisearch](https://meilisearch.com), [ElasticSearch](https://www.elastic.co), [Typesense](https://typesense.org) and [Fuse.js](https://www.fusejs.io).
 - **Memory adapter**: Can run searches in-memory. Suitable for small datasets.
 - **Fulltext search**: Search content by text.
 - **Sorting**: Sort results by any field.
