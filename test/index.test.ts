@@ -59,7 +59,7 @@ describe('index', () => {
         page: 0,
         sort: [],
         facets: [],
-        filters: []
+        filters: undefined
       })
     })
 
@@ -90,22 +90,20 @@ describe('index', () => {
       test('single filter', async () => {
         await index.search('query', {
           filters: {
-            op: '=',
-            field: 'author',
-            value: 'josh'
+            id: {
+              eq: '123'
+            }
           }
         })
 
         expect(adapter.search).toBeCalledWith(
           'query',
           expect.objectContaining({
-            filters: [
-              {
-                op: '=',
-                field: 'author',
-                value: 'josh'
+            filters: {
+              id: {
+                eq: '123'
               }
-            ]
+            }
           })
         )
       })

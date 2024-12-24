@@ -1,5 +1,3 @@
-import type * as filters from './filters.ts'
-
 export interface SortField {
   field: string
   direction?: 'asc' | 'desc'
@@ -7,18 +5,46 @@ export interface SortField {
 
 export type Sort = string | Array<string | SortField>
 
-export interface SearchOptions {
+export type FieldFilter<T> = {
+  [Key in keyof T]: {
+    eq?: T[Key]
+    neq?: T[Key]
+    lt?: T[Key]
+    lte?: T[Key]
+    gt?: T[Key]
+    gte?: T[Key]
+    in?: Array<T[Key]>
+    between?: [T[Key], T[Key]]
+  }
+}
+
+export type AndFilter<T> = {
+  and: Array<Filters<T>>
+}
+
+export type OrFilter<T> = {
+  or: Array<Filters<T>>
+}
+
+export type NotFilter<T> = {
+  not: Filters<T>
+}
+
+export type ConditionFilter<T> = AndFilter<T> | OrFilter<T> | NotFilter<T>
+export type Filters<T> = FieldFilter<T> | ConditionFilter<T>
+
+export interface SearchOptions<T> {
   page: number
   sort: SortField[]
   facets: string[]
-  filters: filters.Filter[]
+  filters?: Filters<T>
 }
 
-export interface SoftSearchOptions {
+export interface SoftSearchOptions<T> {
   page?: string | number
   sort?: Sort
   facets?: string[]
-  filters?: filters.Filter | filters.Filter[]
+  filters?: Filters<T>
 }
 
 export type FacetStats = Record<string, number>
@@ -33,7 +59,7 @@ export interface SearchResult<T> {
   sort: SortField[]
   records: T[]
   facets: Record<string, FacetStats>
-  filters: filters.Filter[]
+  filters?: Filters<T>
 }
 
 export interface DocumentBase {
@@ -43,7 +69,7 @@ export interface DocumentBase {
 
 export interface Adapter<T extends DocumentBase> {
   get(id: string): Promise<T | null>
-  search(query: string, options: SearchOptions): Promise<SearchResult<T>>
+  search(query: string, options: SearchOptions<T>): Promise<SearchResult<T>>
   submit(docs: T[]): Promise<void>
   delete(id: string): Promise<void>
   swap(newIndex: string): Promise<void>

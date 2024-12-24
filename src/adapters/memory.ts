@@ -4,9 +4,10 @@ import type {
   SearchOptions,
   FacetStats,
   SortField,
-  SearchResult
+  SearchResult,
+  Filters,
+  FieldFilter
 } from '../types.ts'
-import type * as filters from '../filters.ts'
 import Fuse from 'fuse.js'
 
 interface Options<T> {
@@ -14,6 +15,10 @@ interface Options<T> {
   pageSize?: number
   keys?: string[]
 }
+
+type Entries<T> = {
+  [K in keyof T]: [K, T[K]]
+}[keyof T][]
 
 export class Memory<T extends DocumentBase> implements Adapter<T> {
   #documents: Record<string, T>
@@ -32,7 +37,7 @@ export class Memory<T extends DocumentBase> implements Adapter<T> {
     return this.#documents[id] || null
   }
 
-  async search(query: string, options: SearchOptions): Promise<SearchResult<T>> {
+  async search(query: string, options: SearchOptions<T>): Promise<SearchResult<T>> {
     const { page, sort, filters } = options
 
     const docs = Object.values(this.#documents)
@@ -94,50 +99,86 @@ function order<T>(docs: T[], sort: SortField[]): T[] {
   })
 }
 
-function filter<T>(docs: T[], filters: filters.Filter[]) {
-  return docs.filter((doc) => {
-    return filters.every((filter) => match(doc, filter))
-  })
+function filter<T>(docs: T[], filters?: Filters<T>) {
+  if (!filters) return docs
+
+  return docs.filter((doc) => match(doc, filters))
 }
 
-function match<T>(doc: T, filter: filters.Filter): boolean {
-  // TODO: handle arrays `if (Array.isArray(doc[field.field])) { }`
-  switch (filter.op) {
-    case '=':
-      return doc[filter.field as keyof T] == filter.value
-    case '!=':
-      return doc[filter.field as keyof T] !== filter.value
-    case '>':
-      // @ts-expect-error fixme
-      return doc[filter.field as keyof T] > filter.value
-    case '>=':
-      // @ts-expect-error fixme
-      return doc[filter.field as keyof T] >= filter.value
-    case '<':
-      // @ts-expect-error fixme
-      return doc[filter.field as keyof T] < filter.value
-    case '<=':
-      // @ts-expect-error fixme
-      return doc[filter.field as keyof T] <= filter.value
-    case 'in':
-      // @ts-expect-error fixme
-      return filter.value.some((value) => doc[filter.field as keyof T] == value)
-    case 'between':
-      return (
-        // @ts-expect-error fixme
-        doc[filter.field as keyof T] >= filter.values[0] &&
-        // @ts-expect-error fixme
-        doc[filter.field as keyof T] <= filter.values[1]
-      )
-    case 'not':
-      return !match(doc, filter.condition)
-
-    case 'and':
-      return filter.conditions.every((condition: filters.Filter) => match(doc, condition))
-
-    case 'or':
-      return filter.conditions.some((condition: filters.Filter) => match(doc, condition))
+function match<T>(doc: T, filters: Filters<T>): boolean {
+  if ('and' in filters) {
+    return filters.and.every((conditions) => match(doc, conditions))
   }
+
+  if ('or' in filters) {
+    return filters.or.some((conditions) => match(doc, conditions))
+  }
+
+  if ('not' in filters) {
+    return !match(doc, filters.not)
+  }
+
+  for (const [field, matches] of Object.entries(filters) as Entries<FieldFilter<T>>) {
+    if ('eq' in matches) {
+      return doc[field] == matches.eq
+    }
+
+    if ('neq' in matches) {
+      return doc[field] != matches.neq
+    }
+
+    if ('gt' in matches) {
+      if (!matches.gt) {
+        throw new Error(`${String(field)}.gt is not defined`)
+      }
+
+      return doc[field] > matches.gt
+    }
+
+    if ('gte' in matches) {
+      if (!matches.gte) {
+        throw new Error(`${String(field)}.gte is not defined`)
+      }
+
+      return doc[field] >= matches.gte
+    }
+
+    if ('lt' in matches) {
+      if (!matches.lt) {
+        throw new Error(`${String(field)}.lt is not defined`)
+      }
+
+      return doc[field] < matches.lt
+    }
+
+    if ('lte' in matches) {
+      if (!matches.lte) {
+        throw new Error(`${String(field)}.lte is not defined`)
+      }
+
+      return doc[field] <= matches.lte
+    }
+
+    if ('in' in matches) {
+      if (!matches.in) {
+        throw new Error(`${String(field)}.in is not defined`)
+      }
+
+      return matches.in.some((value) => doc[field] == value)
+    }
+
+    if ('between' in matches) {
+      if (!matches.between) {
+        throw new Error(`${String(field)}.between is not defined`)
+      }
+
+      const { between } = matches
+
+      return doc[field] >= between[0] && doc[field] <= between[1]
+    }
+  }
+
+  return true
 }
 
 function aggregate_facets<T>(docs: T[], facets: string[]): Record<string, FacetStats> {

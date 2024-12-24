@@ -35,7 +35,7 @@ export class Algolia<T extends DocumentBase> implements Adapter<T> {
     return deserialize<T>(result)
   }
 
-  async search(query: string, options: SearchOptions): Promise<SearchResult<T>> {
+  async search(query: string, options: SearchOptions<T>): Promise<SearchResult<T>> {
     const { page, facets, filters, sort } = options
     const { results } = await this.#client.search<T>({
       requests: [

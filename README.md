@@ -5,6 +5,16 @@ A set of adapters for working with common search engines like [Algolia](https://
 
 **🚧 In active development, don't use yet 🚧**
 
+## Features
+
+- Multiple adapters
+- Memory
+- Pagination
+- Sorting
+- Filtering
+- Facets
+- Indexing
+
 ## Usage
 
 Initialize an index with an adapter, for example Algolia:
@@ -49,16 +59,14 @@ Search the index for matching docs:
 const matches = await index.search('hello')
 ```
 
-Can also filter the index while searching:
+Can also filter while searching:
 
 ```typescript
 const matches = await index.search('hello', {
-  filters: [
-    or(
-      eq('tags', 'js'),
-      eq('tags', 'rust')
-    )
-  ]
+  filters: {
+    tags: { in: ['js', 'rust'] },
+    published: { gt: new Date(2000, 1, 1) }
+  }
 })
 ```
 

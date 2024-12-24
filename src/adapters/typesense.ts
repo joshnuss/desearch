@@ -56,7 +56,7 @@ export class TypeSense<T extends DocumentBase> implements Adapter<T> {
     await this.#client.collections(this.#collectionName).documents().delete()
   }
 
-  async search(query: string, options: SearchOptions): Promise<SearchResult<T>> {
+  async search(query: string, options: SearchOptions<T>): Promise<SearchResult<T>> {
     const { sort, page, facets, filters } = options
     const results = await this.#client
       .collections(this.#collectionName)

@@ -4,7 +4,6 @@ export { TypeSense } from './adapters/typesense.js'
 export { Memory } from './adapters/memory.js'
 
 export type * from './types.ts'
-import type * as filters from './filters.ts'
 
 import type {
   Adapter,
@@ -12,7 +11,8 @@ import type {
   SoftSearchOptions,
   SortField,
   Sort,
-  SearchResult
+  SearchResult,
+  Filters
 } from './types.ts'
 
 export class Index<T extends DocumentBase> {
@@ -34,11 +34,11 @@ export class Index<T extends DocumentBase> {
     await this.#adapter.submit(docs)
   }
 
-  async search(query: string, options?: SoftSearchOptions): Promise<SearchResult<T>> {
+  async search(query: string, options?: SoftSearchOptions<T>): Promise<SearchResult<T>> {
     const sort = sort_keys(options?.sort || [])
     const page: number = +(options?.page || 0)
     const facets: string[] = options?.facets || []
-    const filters: filters.Filter[] = to_array(options?.filters || [])
+    const filters: Filters<T> | undefined = options?.filters
 
     return await this.#adapter.search(query, {
       page,

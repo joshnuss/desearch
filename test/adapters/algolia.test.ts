@@ -295,11 +295,10 @@ describe('algolia', () => {
   })
 })
 
-function search_options(options: Partial<SearchOptions> = {}): SearchOptions {
+function search_options(options: Partial<SearchOptions<Document>> = {}): SearchOptions<Document> {
   return {
     page: 0,
     facets: [],
-    filters: [],
     sort: [],
     ...options
   }

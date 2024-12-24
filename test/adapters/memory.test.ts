@@ -1,6 +1,5 @@
 import { Memory } from '../../src/index.js'
 import type { SearchOptions, DocumentBase } from '../../src/index.js'
-import { eq, neq, gt, gte, lt, lte, has, between, not, and, or } from '../../src/filters.js'
 
 interface Document extends DocumentBase {
   id: string
@@ -98,7 +97,9 @@ describe('memory adapter', () => {
         const result = await adapter.search(
           '',
           search_options({
-            filters: [eq('category', 'clothing')]
+            filters: {
+              category: { eq: 'clothing' }
+            }
           })
         )
 
@@ -112,7 +113,9 @@ describe('memory adapter', () => {
         const result = await adapter.search(
           '',
           search_options({
-            filters: [neq('category', 'clothing')]
+            filters: {
+              category: { neq: 'clothing' }
+            }
           })
         )
 
@@ -123,7 +126,9 @@ describe('memory adapter', () => {
         const result = await adapter.search(
           '',
           search_options({
-            filters: [gt('price', 10)]
+            filters: {
+              price: { gt: 10 }
+            }
           })
         )
 
@@ -137,7 +142,9 @@ describe('memory adapter', () => {
         const result = await adapter.search(
           '',
           search_options({
-            filters: [gte('price', 20)]
+            filters: {
+              price: { gte: 20 }
+            }
           })
         )
 
@@ -151,7 +158,9 @@ describe('memory adapter', () => {
         const result = await adapter.search(
           '',
           search_options({
-            filters: [lt('price', 40)]
+            filters: {
+              price: { lt: 40 }
+            }
           })
         )
 
@@ -165,7 +174,9 @@ describe('memory adapter', () => {
         const result = await adapter.search(
           '',
           search_options({
-            filters: [lte('price', 20)]
+            filters: {
+              price: { lte: 20 }
+            }
           })
         )
 
@@ -175,11 +186,13 @@ describe('memory adapter', () => {
         ])
       })
 
-      test('has', async () => {
+      test('in', async () => {
         const result = await adapter.search(
           '',
           search_options({
-            filters: [has('price', [10, 20])]
+            filters: {
+              price: { in: [10, 20] }
+            }
           })
         )
 
@@ -193,7 +206,9 @@ describe('memory adapter', () => {
         const result = await adapter.search(
           '',
           search_options({
-            filters: [between('price', 10, 20)]
+            filters: {
+              price: { between: [10, 20] }
+            }
           })
         )
 
@@ -207,7 +222,11 @@ describe('memory adapter', () => {
         const result = await adapter.search(
           '',
           search_options({
-            filters: [not(eq('price', 40))]
+            filters: {
+              not: {
+                price: { eq: 40 }
+              }
+            }
           })
         )
 
@@ -221,7 +240,9 @@ describe('memory adapter', () => {
         const result = await adapter.search(
           '',
           search_options({
-            filters: [and(gte('price', 10), eq('category', 'clothing'))]
+            filters: {
+              and: [{ price: { gte: 10 } }, { category: { eq: 'clothing' } }]
+            }
           })
         )
 
@@ -235,7 +256,9 @@ describe('memory adapter', () => {
         const result = await adapter.search(
           '',
           search_options({
-            filters: [or(eq('price', 40), eq('price', 10))]
+            filters: {
+              or: [{ price: { eq: 40 } }, { price: { eq: 10 } }]
+            }
           })
         )
 
@@ -492,11 +515,10 @@ describe('memory adapter', () => {
   })
 })
 
-function search_options({ ...options } = {}): SearchOptions {
+function search_options({ ...options } = {}): SearchOptions<Document> {
   return {
     page: 0,
     sort: [],
-    filters: [],
     facets: [],
     ...options
   }
